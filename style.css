@@ -1,0 +1,560 @@
+/* =============================================
+   Portfolio — Jordan Vale · Mechanical Design
+   style.css
+   ============================================= */
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:         #eeece8;
+  --bg2:        #e3e0da;
+  --ink:        #1a1c1b;
+  --ink-mid:    #5c6361;
+  --ink-light:  #9ba5a2;
+  --teal:       #1a9e8f;
+  --teal-dim:   #127a6e;
+  --teal-pale:  rgba(26,158,143,0.07);
+  --teal-line:  rgba(26,158,143,0.22);
+  --line:       rgba(26,28,27,0.11);
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: 'DM Mono', monospace;
+  font-weight: 300;
+  overflow-x: hidden;
+  cursor: none;
+}
+
+/* ── Noise overlay ── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 9997;
+  opacity: 0.35;
+}
+
+/* ── Crosshair cursor ── */
+#cursor-x, #cursor-y {
+  position: fixed;
+  background: var(--teal);
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.5;
+}
+#cursor-x { width: 22px; height: 1px; transform: translate(-50%,-50%); }
+#cursor-y { width: 1px; height: 22px; transform: translate(-50%,-50%); }
+
+#cursor-dot {
+  position: fixed;
+  width: 4px; height: 4px;
+  background: var(--teal);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%,-50%);
+  transition: width 0.2s, height 0.2s, transform 0.15s;
+}
+
+#cursor-reticle {
+  position: fixed;
+  width: 26px; height: 26px;
+  border: 1px solid var(--teal);
+  pointer-events: none;
+  z-index: 9998;
+  transform: translate(-50%,-50%) rotate(45deg);
+  opacity: 0;
+  transition: opacity 0.25s, width 0.3s, height 0.3s, transform 0.5s;
+}
+body:hover #cursor-reticle { opacity: 0.38; }
+
+/* ── Nav ── */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.8rem 3.5rem;
+  background: rgba(238,236,232,0.88);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--line);
+}
+.nav-logo {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1rem;
+  letter-spacing: 0.1em;
+  color: var(--ink);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+}
+.nav-logo-dot {
+  display: inline-block;
+  width: 7px; height: 7px;
+  background: var(--teal);
+  border-radius: 50%;
+}
+.nav-links { display: flex; gap: 2.5rem; list-style: none; }
+.nav-links a {
+  font-size: 0.63rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-mid);
+  text-decoration: none;
+  transition: color 0.2s;
+  position: relative;
+}
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  bottom: -3px; left: 0;
+  width: 0; height: 1px;
+  background: var(--teal);
+  transition: width 0.3s;
+}
+.nav-links a:hover { color: var(--ink); }
+.nav-links a:hover::after { width: 100%; }
+
+/* ── Shared section defaults ── */
+section { position: relative; overflow: hidden; }
+
+/* ── Parallax & geo shapes ── */
+.parallax-bg {
+  position: absolute;
+  top: -20%; left: 0; right: 0;
+  height: 140%;
+  will-change: transform;
+  pointer-events: none;
+}
+.geo-circle {
+  position: absolute;
+  border-radius: 50%;
+  border: 1px solid var(--teal-line);
+}
+.geo-rect {
+  position: absolute;
+  border: 1px solid var(--teal-line);
+}
+
+/* ── Hero ── */
+#hero {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 0 3.5rem 5rem;
+  background: var(--bg);
+}
+#hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(var(--teal-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--teal-line) 1px, transparent 1px);
+  background-size: 64px 64px;
+  opacity: 0.12;
+  pointer-events: none;
+}
+.hero-tag {
+  font-size: 0.58rem;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--teal);
+  margin-bottom: 1.2rem;
+  opacity: 0;
+  transform: translateY(14px);
+  animation: fadeUp 0.8s 0.2s forwards;
+}
+.hero-eyebrow {
+  font-size: 0.63rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ink-light);
+  margin-bottom: 1.4rem;
+  opacity: 0;
+  transform: translateY(14px);
+  animation: fadeUp 0.8s 0.38s forwards;
+}
+h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(4rem, 10vw, 8.5rem);
+  font-weight: 300;
+  line-height: 0.92;
+  letter-spacing: -0.02em;
+  opacity: 0;
+  transform: translateY(28px);
+  animation: fadeUp 1s 0.55s forwards;
+}
+h1 em { font-style: italic; color: var(--teal); }
+.hero-sub {
+  margin-top: 2.2rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.09em;
+  color: var(--ink-mid);
+  max-width: 370px;
+  line-height: 2;
+  opacity: 0;
+  transform: translateY(14px);
+  animation: fadeUp 0.9s 0.82s forwards;
+}
+.hero-cta {
+  margin-top: 2.4rem;
+  opacity: 0;
+  transform: translateY(14px);
+  animation: fadeUp 0.9s 1s forwards;
+}
+.scroll-indicator {
+  position: absolute;
+  bottom: 2.5rem; right: 3.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.57rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ink-light);
+  opacity: 0;
+  animation: fadeUp 0.9s 1.3s forwards;
+}
+.scroll-line {
+  width: 1px; height: 55px;
+  background: linear-gradient(to bottom, var(--teal), transparent);
+  animation: scrollPulse 2.2s 2s infinite;
+  transform-origin: top;
+}
+
+/* ── About ── */
+#about {
+  background: var(--bg2);
+  padding: 10rem 3.5rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6rem;
+  align-items: center;
+}
+.about-number {
+  font-size: 0.57rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--teal);
+  margin-bottom: 1.8rem;
+}
+.about-heading {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(2.4rem, 5vw, 4.2rem);
+  font-weight: 300;
+  line-height: 1.1;
+}
+.about-heading em { font-style: italic; color: var(--teal); }
+.about-text {
+  font-size: 0.74rem;
+  line-height: 2.1;
+  color: var(--ink-mid);
+  margin-bottom: 1.6rem;
+}
+.about-stats {
+  display: flex;
+  gap: 2.5rem;
+  margin-top: 3rem;
+  padding-top: 2.5rem;
+  border-top: 1px solid var(--line);
+}
+.stat-num {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2.8rem;
+  font-weight: 300;
+  color: var(--teal);
+  display: block;
+}
+.stat-label {
+  font-size: 0.57rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-light);
+}
+.software-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+  margin-top: 2rem;
+}
+.tag {
+  font-size: 0.58rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 0.38rem 0.75rem;
+  border: 1px solid var(--teal-line);
+  color: var(--teal-dim);
+  background: var(--teal-pale);
+}
+
+/* ── Work ── */
+#work { background: var(--bg); padding: 10rem 3.5rem; }
+.work-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 5rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid var(--line);
+}
+.section-label {
+  font-size: 0.57rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--teal);
+}
+.work-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(2rem, 4vw, 3.4rem);
+  font-weight: 300;
+}
+.projects { display: flex; flex-direction: column; }
+.project-row {
+  display: grid;
+  grid-template-columns: 3fr 1.5fr 1fr auto;
+  align-items: center;
+  gap: 2rem;
+  padding: 2rem 0;
+  border-bottom: 1px solid var(--line);
+  cursor: none;
+  position: relative;
+  overflow: hidden;
+}
+.project-row::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--teal-pale);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.5s cubic-bezier(.25,.46,.45,.94);
+}
+.project-row::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0;
+  width: 0; height: 1px;
+  background: var(--teal);
+  transition: width 0.5s cubic-bezier(.25,.46,.45,.94);
+}
+.project-row:hover::before { transform: scaleX(1); }
+.project-row:hover::after { width: 100%; }
+.project-row:hover .project-name { transform: translateX(10px); color: var(--teal-dim); }
+.project-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.85rem;
+  font-weight: 300;
+  position: relative;
+  transition: transform 0.4s cubic-bezier(.25,.46,.45,.94), color 0.3s;
+}
+.project-type {
+  font-size: 0.58rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-light);
+  position: relative;
+}
+.project-year {
+  font-size: 0.66rem;
+  color: var(--ink-light);
+  font-variant-numeric: tabular-nums;
+  position: relative;
+}
+.project-arrow {
+  width: 34px; height: 34px;
+  border: 1px solid var(--teal-line);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  color: var(--teal);
+  position: relative;
+  transition: transform 0.3s, background 0.3s, color 0.3s;
+}
+.project-row:hover .project-arrow {
+  background: var(--teal);
+  color: var(--bg);
+  transform: rotate(-45deg);
+}
+
+/* ── Skills ── */
+#skills {
+  background: var(--ink);
+  color: var(--bg);
+  padding: 10rem 3.5rem;
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 6rem;
+}
+#skills .section-label { color: var(--teal); }
+#skills .work-title { color: var(--bg); margin-top: 1rem; }
+.skills-grid { display: grid; grid-template-columns: 1fr 1fr; }
+.skill-item {
+  padding: 2rem 0;
+  border-bottom: 1px solid rgba(238,236,232,0.07);
+  transition: background 0.3s;
+}
+.skill-item:nth-child(odd) {
+  padding-right: 2rem;
+  border-right: 1px solid rgba(238,236,232,0.07);
+}
+.skill-item:nth-child(even) { padding-left: 2rem; }
+.skill-item:hover { background: rgba(26,158,143,0.06); }
+.skill-icon {
+  font-size: 0.57rem;
+  letter-spacing: 0.2em;
+  color: var(--teal);
+  margin-bottom: 0.7rem;
+  text-transform: uppercase;
+}
+.skill-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.35rem;
+  font-weight: 300;
+  margin-bottom: 0.4rem;
+  color: var(--bg);
+}
+.skill-desc {
+  font-size: 0.59rem;
+  letter-spacing: 0.1em;
+  color: var(--ink-light);
+  line-height: 1.9;
+}
+
+/* ── Contact ── */
+#contact {
+  background: var(--bg);
+  padding: 10rem 3.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  position: relative;
+}
+#contact::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(var(--teal-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--teal-line) 1px, transparent 1px);
+  background-size: 64px 64px;
+  opacity: 0.08;
+  pointer-events: none;
+}
+.contact-eyebrow {
+  font-size: 0.57rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--teal);
+  margin-bottom: 2rem;
+  position: relative;
+}
+.contact-heading {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(3rem, 8vw, 6.5rem);
+  font-weight: 300;
+  line-height: 0.95;
+  margin-bottom: 3rem;
+  max-width: 800px;
+  position: relative;
+}
+.contact-heading em { font-style: italic; color: var(--teal); }
+
+/* ── Button ── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 1rem 2.5rem;
+  border: 1px solid var(--teal);
+  font-family: 'DM Mono', monospace;
+  font-size: 0.63rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--teal);
+  text-decoration: none;
+  position: relative;
+  overflow: hidden;
+  transition: color 0.35s;
+  cursor: none;
+}
+.btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--teal);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.35s cubic-bezier(.25,.46,.45,.94);
+}
+.btn:hover { color: var(--bg); }
+.btn:hover::before { transform: scaleX(1); }
+.btn span { position: relative; }
+
+/* ── Footer ── */
+.footer-bar {
+  margin-top: 8rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--line);
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.58rem;
+  color: var(--ink-light);
+  letter-spacing: 0.1em;
+  position: relative;
+}
+.footer-bar a {
+  color: var(--ink-light);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.footer-bar a:hover { color: var(--teal); }
+.footer-links { display: flex; gap: 2rem; }
+
+/* ── Scroll reveal ── */
+.reveal {
+  opacity: 0;
+  transform: translateY(36px);
+  transition: opacity 0.9s cubic-bezier(.25,.46,.45,.94), transform 0.9s cubic-bezier(.25,.46,.45,.94);
+}
+.reveal.visible { opacity: 1; transform: none; }
+.reveal-delay-1 { transition-delay: 0.15s; }
+.reveal-delay-2 { transition-delay: 0.3s; }
+.reveal-delay-3 { transition-delay: 0.45s; }
+
+/* ── Keyframes ── */
+@keyframes fadeUp { to { opacity: 1; transform: none; } }
+@keyframes scrollPulse {
+  0%,100% { transform: scaleY(1); opacity: 1; }
+  50% { transform: scaleY(0.35); opacity: 0.2; }
+}
+
+/* ── Experience detail cards ── */
+.exp-detail { transition: border-color 0.3s; }
+.exp-detail:hover { border-color: var(--teal-line) !important; }
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  nav { padding: 1.4rem 1.5rem; }
+  #hero { padding: 0 1.5rem 4rem; }
+  #about, #work, #skills, #contact { padding: 6rem 1.5rem; }
+  #about { grid-template-columns: 1fr; gap: 3rem; }
+  #skills { grid-template-columns: 1fr; gap: 3rem; }
+  .project-row { grid-template-columns: 1fr auto; }
+  .project-type, .project-year { display: none; }
+  .footer-bar { flex-direction: column; gap: 1rem; }
+}
