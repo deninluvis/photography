@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>404 — Denin Luvis</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:        #eeece8;
+      --bg2:       #e3e0da;
+      --ink:       #1a1c1b;
+      --ink-mid:   #5c6361;
+      --ink-light: #9ba5a2;
+      --teal:      #1a9e8f;
+      --teal-dim:  #127a6e;
+      --teal-line: rgba(26,158,143,0.22);
+      --line:      rgba(26,28,27,0.11);
+    }
+
+    html, body { height: 100%; }
+
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: 'DM Mono', monospace;
+      font-weight: 300;
+      overflow: hidden;
+      cursor: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Noise */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 9997;
+      opacity: 0.35;
+    }
+
+    /* Grid background */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(var(--teal-line) 1px, transparent 1px),
+        linear-gradient(90deg, var(--teal-line) 1px, transparent 1px);
+      background-size: 64px 64px;
+      opacity: 0.1;
+      pointer-events: none;
+    }
+
+    /* Cursor */
+    #cursor-x, #cursor-y { position: fixed; background: var(--teal); pointer-events: none; z-index: 9999; opacity: 0.5; }
+    #cursor-x { width: 22px; height: 1px; transform: translate(-50%,-50%); }
+    #cursor-y { width: 1px; height: 22px; transform: translate(-50%,-50%); }
+    #cursor-dot { position: fixed; width: 4px; height: 4px; background: var(--teal); border-radius: 50%; pointer-events: none; z-index: 9999; transform: translate(-50%,-50%); transition: transform 0.15s; }
+    #cursor-reticle { position: fixed; width: 26px; height: 26px; border: 1px solid var(--teal); pointer-events: none; z-index: 9998; transform: translate(-50%,-50%) rotate(45deg); opacity: 0; transition: opacity 0.25s, width 0.3s, height 0.3s, transform 0.5s; }
+    body:hover #cursor-reticle { opacity: 0.38; }
+
+    /* Geo shapes */
+    .geo-circle { position: fixed; border-radius: 50%; border: 1px solid var(--teal-line); pointer-events: none; }
+    .geo-rect   { position: fixed; border: 1px solid var(--teal-line); pointer-events: none; }
+
+    /* Nav */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.8rem 3.5rem;
+      background: rgba(238,236,232,0.88);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--line);
+    }
+    .nav-logo { font-family: 'Cormorant Garamond', serif; font-size: 1rem; letter-spacing: 0.1em; color: var(--ink); text-decoration: none; display: flex; align-items: center; gap: 0.7rem; }
+    .nav-logo-dot { display: inline-block; width: 7px; height: 7px; background: var(--teal); border-radius: 50%; }
+
+    /* Main content */
+    .container {
+      position: relative;
+      z-index: 10;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+    }
+
+    .error-label {
+      font-size: 0.57rem;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--teal);
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      animation: fadeUp 0.7s 0.2s forwards;
+    }
+
+    .error-number {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(7rem, 20vw, 16rem);
+      font-weight: 300;
+      line-height: 0.85;
+      letter-spacing: -0.04em;
+      color: var(--bg2);
+      -webkit-text-stroke: 1px var(--teal-line);
+      position: relative;
+      opacity: 0;
+      animation: fadeUp 0.9s 0.3s forwards;
+      user-select: none;
+    }
+
+    /* Teal "4" accent */
+    .error-number .accent { color: var(--teal); -webkit-text-stroke: 0; }
+
+    .error-heading {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1.6rem, 3vw, 2.6rem);
+      font-weight: 300;
+      margin-top: 1.5rem;
+      opacity: 0;
+      animation: fadeUp 0.8s 0.5s forwards;
+    }
+    .error-heading em { font-style: italic; color: var(--teal); }
+
+    .error-sub {
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+      color: var(--ink-mid);
+      margin-top: 1.2rem;
+      line-height: 2;
+      max-width: 340px;
+      opacity: 0;
+      animation: fadeUp 0.8s 0.65s forwards;
+    }
+
+    .error-actions {
+      display: flex;
+      gap: 1rem;
+      margin-top: 2.5rem;
+      opacity: 0;
+      animation: fadeUp 0.8s 0.8s forwards;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.9rem 2rem;
+      border: 1px solid var(--teal);
+      font-family: 'DM Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--teal);
+      text-decoration: none;
+      position: relative;
+      overflow: hidden;
+      transition: color 0.35s;
+      cursor: none;
+    }
+    .btn::before { content: ''; position: absolute; inset: 0; background: var(--teal); transform: scaleX(0); transform-origin: left; transition: transform 0.35s cubic-bezier(.25,.46,.45,.94); }
+    .btn:hover { color: var(--bg); }
+    .btn:hover::before { transform: scaleX(1); }
+    .btn span { position: relative; }
+
+    .btn-ghost {
+      border-color: var(--line);
+      color: var(--ink-mid);
+    }
+    .btn-ghost::before { background: var(--ink-mid); }
+    .btn-ghost:hover { color: var(--bg); }
+
+    /* Coordinates readout */
+    .coords {
+      position: fixed;
+      bottom: 2rem;
+      left: 3.5rem;
+      font-size: 0.55rem;
+      letter-spacing: 0.18em;
+      color: var(--ink-light);
+      opacity: 0;
+      animation: fadeUp 0.8s 1.1s forwards;
+      font-variant-numeric: tabular-nums;
+    }
+
+    @keyframes fadeUp { to { opacity: 1; transform: none; } }
+    .container > * { transform: translateY(20px); }
+  </style>
+</head>
+<body>
+
+  <div id="cursor-x"></div>
+  <div id="cursor-y"></div>
+  <div id="cursor-dot"></div>
+  <div id="cursor-reticle"></div>
+
+  <!-- Geo shapes -->
+  <div class="geo-circle" style="width:420px;height:420px;top:-100px;left:-100px;"></div>
+  <div class="geo-circle" style="width:200px;height:200px;bottom:80px;right:120px;"></div>
+  <div class="geo-rect"   style="width:70px;height:70px;bottom:30%;left:10%;transform:rotate(18deg);"></div>
+  <div class="geo-rect"   style="width:35px;height:35px;top:30%;right:8%;transform:rotate(9deg);"></div>
+
+  <nav>
+    <a href="/" class="nav-logo">
+      <span class="nav-logo-dot"></span>Denin Luvis
+    </a>
+  </nav>
+
+  <div class="container">
+    <p class="error-label">Error · Page not found</p>
+    <p class="error-number"><span class="accent">4</span>0<span class="accent">4</span></p>
+    <h1 class="error-heading">Lost in the <em>blueprint.</em></h1>
+    <p class="error-sub">This page doesn't exist — or it's been moved. Let's get you back to something that does.</p>
+    <div class="error-actions">
+      <a href="/" class="btn"><span>← Back to home</span></a>
+      <a href="/#contact" class="btn btn-ghost"><span>Contact me</span></a>
+    </div>
+  </div>
+
+  <p class="coords" id="coords">X: 000 · Y: 000</p>
+
+  <script>
+    const cx = document.getElementById('cursor-x');
+    const cy = document.getElementById('cursor-y');
+    const dot = document.getElementById('cursor-dot');
+    const reticle = document.getElementById('cursor-reticle');
+    const coords = document.getElementById('coords');
+
+    document.addEventListener('mousemove', e => {
+      const x = e.clientX, y = e.clientY;
+      cx.style.left = x + 'px';  cx.style.top = y + 'px';
+      cy.style.left = x + 'px';  cy.style.top = y + 'px';
+      dot.style.left = x + 'px'; dot.style.top = y + 'px';
+      reticle.style.left = x + 'px'; reticle.style.top = y + 'px';
+      coords.textContent = `X: ${String(x).padStart(3,'0')} · Y: ${String(y).padStart(3,'0')}`;
+    });
+
+    document.querySelectorAll('a, .btn').forEach(el => {
+      el.addEventListener('mouseenter', () => {
+        reticle.style.width = '46px'; reticle.style.height = '46px';
+        reticle.style.opacity = '0.65';
+        reticle.style.transform = 'translate(-50%,-50%) rotate(0deg)';
+        dot.style.transform = 'translate(-50%,-50%) scale(2)';
+      });
+      el.addEventListener('mouseleave', () => {
+        reticle.style.width = '26px'; reticle.style.height = '26px';
+        reticle.style.opacity = '0.38';
+        reticle.style.transform = 'translate(-50%,-50%) rotate(45deg)';
+        dot.style.transform = 'translate(-50%,-50%) scale(1)';
+      });
+    });
+  </script>
+</body>
+</html>
