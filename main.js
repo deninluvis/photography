@@ -86,15 +86,18 @@ async function fetchGalleryEntries(folder) {
         if (!r.ok) return null;
         const data = await r.json();
         if (!data.image) return null;
+        // The CMS stores the image field relative to the entry's own folder
+        // (just a bare filename), not a full repo path — resolve it here.
+        const imagePath = data.image.includes('/') ? data.image : `images/${folder}/${data.image}`;
         return {
           key: item.name,
-          url: rawUrl(data.image),
-          title: data.title || formatCaption(data.image.split('/').pop()),
+          url: rawUrl(imagePath),
+          title: data.title || formatCaption(imagePath.split('/').pop()),
           location: data.location || '',
           camera: data.camera || '',
           description: data.description || '',
           link: data.link || '',
-          imagePath: data.image,
+          imagePath,
         };
       } catch (e) {
         return null;
