@@ -3,206 +3,126 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Denin Luvis · Mechanical Design Engineer</title>
+  <title>Denin Luvis</title>
+  <meta name="description" content="Denin Luvis — photography and personal engineering design projects, just for fun." />
 
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
 
   <!-- Stylesheet -->
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-  <!-- ── Crosshair cursor ── -->
-  <div id="cursor-x"></div>
-  <div id="cursor-y"></div>
-  <div id="cursor-dot"></div>
-  <div id="cursor-reticle"></div>
-
   <!-- ── Navigation ── -->
-  <nav>
-    <a href="#" class="nav-logo">
-      <span class="nav-logo-dot"></span>Denin Luvis
-    </a>
-    <ul class="nav-links">
+  <nav id="nav">
+    <a href="#" class="nav-logo">Denin Luvis</a>
+    <ul class="nav-links" id="nav-links">
+      <li><a href="#hero" class="active">Home</a></li>
+      <li><a href="#photography">Photography</a></li>
+      <li><a href="#engineering">Engineering</a></li>
       <li><a href="#about">About</a></li>
-      <li><a href="#work">Experience</a></li>
-      <li><a href="#skills">Skills</a></li>
       <li><a href="#contact">Contact</a></li>
     </ul>
+    <button class="nav-toggle" id="nav-toggle" aria-label="Toggle menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
   </nav>
 
   <!-- ── Hero ── -->
   <section id="hero">
-    <div class="parallax-bg" data-speed="0.3">
-      <div class="geo-circle" style="width:520px;height:520px;top:8%;right:-120px;"></div>
-      <div class="geo-circle" style="width:180px;height:180px;top:55%;left:18%;"></div>
-      <div class="geo-rect" style="width:90px;height:90px;top:28%;left:42%;transform:rotate(22deg);"></div>
-      <div class="geo-rect" style="width:40px;height:40px;top:70%;right:25%;transform:rotate(12deg);"></div>
+    <div class="hero-content">
+      <h1 class="hero-name">Denin<br>Luvis</h1>
+      <p class="hero-role">Hobbyist Photographer &amp; Design Engineer</p>
+      <p class="hero-sub">By day I design mechanical parts for a living. Off the clock, I'm either chasing good light with a camera or sketching things I don't need to build.</p>
     </div>
-
-    <p class="hero-tag">CSWP · CAD/CAM · FEA · CNC</p>
-    <p class="hero-eyebrow">Mechanical Design Engineer</p>
-    <h1>Denin<br><em>Luvis</em></h1>
-    <p class="hero-sub">Transforming engineering challenges into precise, manufacturable solutions — from SolidWorks models to production-ready designs.</p>
-
-    <div class="hero-cta">
-      <a href="#work" class="btn"><span>View my experience ↓</span></a>
+    <div class="scroll-cue mono">
+      <span class="scroll-cue-line"></span>Scroll
     </div>
+  </section>
 
-    <div class="scroll-indicator">
-      <div class="scroll-line"></div>
-      <span>Scroll</span>
+  <!-- ── Photography ── -->
+  <section id="photography" class="gallery-section">
+    <div class="section-inner">
+      <div class="section-header">
+        <p class="eyebrow reveal mono">01 — Photography</p>
+        <h2 class="section-title reveal reveal-delay-1">Frames I've caught</h2>
+        <p class="section-sub reveal reveal-delay-1">A running collection of shots — nothing curated, just what caught my eye.</p>
+      </div>
+      <div class="gallery-grid"></div>
+      <div class="gallery-empty" hidden>
+        <strong>New shots coming soon</strong>
+        Photos land here automatically as I add them — check back later.
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Engineering ── -->
+  <section id="engineering" class="gallery-section gallery-alt">
+    <div class="section-inner">
+      <div class="section-header">
+        <p class="eyebrow reveal mono">02 — Engineering Design</p>
+        <h2 class="section-title reveal reveal-delay-1">Things I've designed</h2>
+        <p class="section-sub reveal reveal-delay-1">Personal CAD projects, sketches, and the occasional over-engineered solution to a problem nobody had.</p>
+      </div>
+      <div class="gallery-grid"></div>
+      <div class="gallery-empty" hidden>
+        <strong>New builds coming soon</strong>
+        Renders and sketches land here automatically as I add them — check back later.
+      </div>
     </div>
   </section>
 
   <!-- ── About ── -->
   <section id="about">
-    <div class="parallax-bg" data-speed="0.15">
-      <div class="geo-circle" style="width:320px;height:320px;bottom:-80px;left:-70px;"></div>
-    </div>
-
-    <div>
-      <p class="about-number reveal">01 — About</p>
-      <h2 class="about-heading reveal reveal-delay-1">
-        Precision<br>engineered,<br><em>built to last</em>
-      </h2>
-      <div class="about-stats reveal reveal-delay-2">
-        <div>
-          <span class="stat-num">3+</span>
-          <span class="stat-label">Years experience</span>
-        </div>
-        <div>
-          <span class="stat-num">CSWP</span>
-          <span class="stat-label">Certified</span>
-        </div>
-        <div>
-          <span class="stat-num">Adv.</span>
-          <span class="stat-label">Diploma — Mech. Eng.</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="reveal reveal-delay-2">
-      <p class="about-text">I'm a resourceful mechanical engineer specialising in design engineering, CAD/CAM systems, and product development. I have hands-on knowledge in CNC programming and finite element analysis, and a proven ability to collaborate across engineering and marketing teams to ensure design feasibility and manufacturability.</p>
-      <p class="about-text">Based in Scarborough, ON, I hold an Advanced Diploma in Mechanical Engineering Technology – Design from Centennial College, and I'm a Certified SolidWorks Professional (CSWP).</p>
-      <div class="software-tags">
-        <span class="tag">SolidWorks (CSWP)</span>
-        <span class="tag">AutoCAD 2020</span>
-        <span class="tag">ANSYS FEA</span>
-        <span class="tag">MasterCAM 2017</span>
-        <span class="tag">CNC Programming</span>
-        <span class="tag">CAD/CAM</span>
-        <span class="tag">3D Printing</span>
-        <span class="tag">MS Office Suite</span>
-      </div>
-    </div>
-  </section>
-
-  <!-- ── Work / Experience ── -->
-  <section id="work">
-    <div class="work-header">
-      <div>
-        <p class="section-label reveal">02 — Work Experience</p>
-        <h2 class="work-title reveal reveal-delay-1">Career journey</h2>
-      </div>
-      <a href="deninluvis.com" class="btn reveal reveal-delay-1"><span>Full portfolio ↗</span></a>
-    </div>
-
-    <div class="projects">
-
-      <!-- Current / Lorem Ipsum role -->
-      <div class="project-row reveal">
-        <span class="project-name">Maintenance Technician</span>
-        <span class="project-type">Tradition Fine Foods · Scarbobrough, ON</span>
-        <span class="project-year">2025-Present</span>
-        <div class="project-arrow">↗</div>
-      </div>
-
-      <div class="project-row reveal reveal-delay-1">
-        <span class="project-name">Assistant Design Engineer</span>
-        <span class="project-type">Armstech Engineers · Bangalore, IN</span>
-        <span class="project-year">2021–22</span>
-        <div class="project-arrow">↗</div>
-      </div>
-
-    </div>
-
-    <!-- Experience detail cards -->
-    <div class="exp-detail reveal" style="margin-top:4rem;padding:2.5rem;border:1px solid var(--line);background:var(--bg2);">
-      <p class="section-label" style="margin-bottom:1rem;">Maintenance Technician · Tradition Fine Foods (2025-Present)</p>
-      <p class="about-text">I manage full-cycle maintenance and reliability by executing preventative maintenance (PM) schedules via CMMS work orders and document detailed service reports to maintain a comprehensive equipment history. I expertly diagnose and repair depositors, wrappers, and pumps, utilizing Root Cause Analysis (RCA) methodologies to eliminate recurring mechanical failures. To ensure strict production tolerances, I precision-calibrate control elements, including sensors and actuators, and act as a key technical liaison for engineers and planners during new equipment installations and facility upgrades. Finally, I enforce SOPs for tool usage and conduct proactive inspections to mitigate hazards and prevent catastrophic machine failure.</p>
-    </div>
-
-    <div class="exp-detail reveal reveal-delay-1" style="margin-top:1.5rem;padding:2.5rem;border:1px solid var(--line);">
-      <p class="section-label" style="margin-bottom:1rem;">Assistant Design Engineer · Armstech Engineers (Sep 2021 – Dec 2022)</p>
-      <p class="about-text">Created detailed design specifications, 3D models, and prototypes using SolidWorks — iterating designs based on user feedback and technical constraints. Managed multiple design projects, ensuring timely delivery by validating and maintaining high-quality standards throughout the product development process. Maintained comprehensive design documentation, including material specifications and assembly instructions.</p>
-    </div>
-  </section>
-
-  <!-- ── Skills ── -->
-  <section id="skills">
-    <div>
-      <p class="section-label reveal">03 — Expertise</p>
-      <h2 class="work-title reveal reveal-delay-1">
-        What I<br><em style="font-style:italic;color:var(--teal);">engineer</em><br>best
-      </h2>
-    </div>
-
-    <div class="skills-grid">
-      <div class="skill-item reveal">
-        <p class="skill-icon">▸ 01</p>
-        <p class="skill-name">3D CAD / CAM</p>
-        <p class="skill-desc">SolidWorks & AutoCAD — certified professional with advanced modelling and manufacturing workflows</p>
-      </div>
-      <div class="skill-item reveal reveal-delay-1">
-        <p class="skill-icon">▸ 02</p>
-        <p class="skill-name">FEA Simulation</p>
-        <p class="skill-desc">ANSYS-based static, thermal, and structural analysis to validate designs before fabrication</p>
-      </div>
-      <div class="skill-item reveal reveal-delay-1">
-        <p class="skill-icon">▸ 03</p>
-        <p class="skill-name">CNC Programming</p>
-        <p class="skill-desc">Manual G-code programming and MasterCAM toolpath generation for precision machining</p>
-      </div>
-      <div class="skill-item reveal reveal-delay-2">
-        <p class="skill-icon">▸ 04</p>
-        <p class="skill-name">Product Development</p>
-        <p class="skill-desc">End-to-end product lifecycle — from concept and prototyping through to design documentation and release</p>
-      </div>
-      <div class="skill-item reveal reveal-delay-2">
-        <p class="skill-icon">▸ 05</p>
-        <p class="skill-name">Prototyping</p>
-        <p class="skill-desc">Hands-on with 3D printing (FDM/SLA), material science, and rapid iteration of physical models</p>
-      </div>
-      <div class="skill-item reveal reveal-delay-3">
-        <p class="skill-icon">▸ 06</p>
-        <p class="skill-name">Manufacturing Processes</p>
-        <p class="skill-desc">Deep understanding of DFM principles, machining, tolerancing, and real-world production constraints</p>
+    <div class="section-inner">
+      <p class="eyebrow reveal mono">03 — About</p>
+      <h2 class="section-title reveal reveal-delay-1">A bit about me</h2>
+      <div style="margin-top: 2.2rem;">
+        <p class="about-text reveal reveal-delay-1">I'm Denin — a <strong>mechanical design engineer</strong> by trade, based in Scarborough, Ontario. I'm a Certified SolidWorks Professional, which mostly means I can't help but model things I probably don't need to.</p>
+        <p class="about-text reveal reveal-delay-2">Outside of work, I split my free time between two things that scratch the same itch: <strong>photography</strong> and <strong>personal engineering projects</strong>. One is about noticing light and moments, the other about noticing how things fit together — both are really just an excuse to keep making.</p>
+        <p class="about-text reveal reveal-delay-2">This site is where I put both, with no particular schedule. New stuff shows up whenever I get around to it.</p>
       </div>
     </div>
   </section>
 
   <!-- ── Contact ── -->
   <section id="contact">
-    <p class="contact-eyebrow reveal">04 — Let's Work Together</p>
+    <p class="eyebrow reveal mono">04 — Say Hello</p>
     <h2 class="contact-heading reveal reveal-delay-1">
-      Have a design<br>challenge? <em>Let's solve it.</em>
+      Got something to shoot <span class="accent-text">or build together?</span>
     </h2>
-    <a href="mailto:contact@deninluvis.com" class="btn reveal reveal-delay-2">
-      <span>Get in touch ↗</span>
+    <a href="mailto:contact@deninluvis.com" class="btn btn-primary reveal reveal-delay-2">
+      Get in touch ↗
     </a>
 
     <div class="footer-bar reveal">
-      <span>© 2025 Denin Luvis · Scarborough, ON</span>
+      <span>© 2026 Denin Luvis · Scarborough, ON</span>
       <div class="footer-links">
-        <a href="https://deninluvis.com" target="_blank">deninluvis.com</a>
+        <a href="https://deninluvis.com" target="_blank" rel="noopener">deninluvis.com</a>
         <a href="mailto:contact@deninluvis.com">Email</a>
-        <a href="https://www.linkedin.com/in/deninluvis">LinkedIn</a>
+        <a href="https://www.linkedin.com/in/deninluvis" target="_blank" rel="noopener">LinkedIn</a>
       </div>
     </div>
   </section>
+
+  <!-- ── Lightbox ── -->
+  <div id="lightbox">
+    <button id="lightbox-close" aria-label="Close">&times;</button>
+    <button id="lightbox-prev" class="lightbox-nav" aria-label="Previous image">&larr;</button>
+    <img id="lightbox-img" src="" alt="" />
+    <div class="lightbox-info">
+      <div class="lightbox-meta">
+        <span id="lightbox-caption"></span>
+        <span id="lightbox-counter"></span>
+      </div>
+      <p id="lightbox-detail" class="lightbox-detail mono"></p>
+      <a id="lightbox-link" class="lightbox-link mono" href="#" target="_blank" rel="noopener" hidden>View CAD model ↗</a>
+    </div>
+    <button id="lightbox-next" class="lightbox-nav" aria-label="Next image">&rarr;</button>
+  </div>
 
   <!-- JavaScript -->
   <script src="main.js"></script>
