@@ -1,0 +1,76 @@
+# Sveltia CMS config — https://sveltiacms.app
+#
+# Sign in at https://deninluvis.com/admin/ using "Sign In Using Access Token"
+# with a GitHub personal access token scoped to this repo (Contents: Read/write).
+# No OAuth app or proxy server needed for single-user use.
+#
+# (Optional upgrade later: uncomment base_url and point it at a deployed
+# https://github.com/sveltia/sveltia-cms-auth Cloudflare Worker to enable the
+# one-click "Sign In with GitHub" button instead of pasting a token.)
+
+backend:
+  name: github
+  repo: deninluvis/photography
+  branch: main
+  # base_url: https://your-worker-name.your-subdomain.workers.dev
+
+media_folder: ""
+public_folder: ""
+
+collections:
+  - name: photography
+    label: Photography
+    label_singular: Photo
+    folder: images/photography
+    create: true
+    delete: true
+    extension: json
+    format: json
+    slug: "{{year}}{{month}}{{day}}{{hour}}{{minute}}{{second}}"
+    media_folder: ""
+    public_folder: ""
+    summary: "{{title}}"
+    fields:
+      - label: Title
+        name: title
+        widget: string
+      - label: Photo
+        name: image
+        widget: image
+      - label: Location
+        name: location
+        widget: string
+        required: false
+      - label: Camera
+        name: camera
+        widget: string
+        required: false
+
+  - name: engineering
+    label: Engineering Design
+    label_singular: Render
+    folder: images/engineering
+    create: true
+    delete: true
+    extension: json
+    format: json
+    slug: "{{year}}{{month}}{{day}}{{hour}}{{minute}}{{second}}"
+    media_folder: ""
+    public_folder: ""
+    summary: "{{title}}"
+    fields:
+      - label: Title
+        name: title
+        widget: string
+      - label: Render / Sketch
+        name: image
+        widget: image
+      - label: Description
+        name: description
+        widget: text
+        required: false
+      - label: CAD Model Link
+        name: link
+        widget: string
+        required: false
+        hint: "Link to the model on Thangs, GrabCAD, Onshape, etc."
