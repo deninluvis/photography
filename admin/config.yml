@@ -77,3 +77,18 @@ collections:
         widget: string
         required: false
         hint: "Link to the model on Thangs, GrabCAD, Onshape, etc."
+
+  - name: settings
+    label: Site Settings
+    files:
+      - name: home
+        label: Homepage
+        file: content/home.json
+        media_folder: "/images/site"
+        public_folder: "/images/site"
+        fields:
+          - label: Hero Photo
+            name: heroImage
+            widget: image
+            accept: "image/jpeg,image/png,image/webp"
+            hint: "Pinned background photo for the homepage — stays fixed regardless of what's in the Photography gallery. Replace it here anytime."
