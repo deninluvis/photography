@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Photography — Denin Luvis</title>
+  <meta name="description" content="A running collection of photography shots by Denin Luvis — nothing curated, just what caught his eye." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ── Navigation ── -->
+  <nav id="nav">
+    <a href="/" class="nav-logo">Denin Luvis</a>
+    <ul class="nav-links" id="nav-links">
+      <li><a href="/">Home</a></li>
+      <li><a href="/photography.html" class="active">Photography</a></li>
+      <li><a href="/engineering.html">Engineering</a></li>
+      <li><a href="/about.html">About</a></li>
+      <li><a href="/contact.html">Contact</a></li>
+    </ul>
+    <button class="nav-toggle" id="nav-toggle" aria-label="Toggle menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- ── Photography ── -->
+  <section id="photography" class="gallery-section">
+    <div class="section-inner">
+      <div class="section-header">
+        <p class="eyebrow reveal mono">01 — Photography</p>
+        <h2 class="section-title reveal reveal-delay-1">Frames I've caught</h2>
+        <p class="section-sub reveal reveal-delay-1">A running collection of shots — nothing curated, just what caught my eye.</p>
+      </div>
+      <div class="gallery-grid"></div>
+      <div class="gallery-empty" hidden>
+        <strong>New shots coming soon</strong>
+        Photos land here automatically as I add them — check back later.
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Footer ── -->
+  <footer class="site-footer">
+    <div class="footer-bar reveal">
+      <span>© 2026 Denin Luvis · Scarborough, ON</span>
+      <div class="footer-links">
+        <a href="https://deninluvis.com" target="_blank" rel="noopener">deninluvis.com</a>
+        <a href="mailto:contact@deninluvis.com">Email</a>
+        <a href="https://www.linkedin.com/in/deninluvis" target="_blank" rel="noopener">LinkedIn</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ── Lightbox ── -->
+  <div id="lightbox">
+    <button id="lightbox-close" aria-label="Close">&times;</button>
+    <button id="lightbox-prev" class="lightbox-nav" aria-label="Previous image">&larr;</button>
+    <img id="lightbox-img" src="" alt="" />
+    <div class="lightbox-info">
+      <div class="lightbox-meta">
+        <span id="lightbox-caption"></span>
+        <span id="lightbox-counter"></span>
+      </div>
+      <p id="lightbox-detail" class="lightbox-detail mono"></p>
+      <a id="lightbox-link" class="lightbox-link mono" href="#" target="_blank" rel="noopener" hidden>View CAD model ↗</a>
+    </div>
+    <button id="lightbox-next" class="lightbox-nav" aria-label="Next image">&rarr;</button>
+  </div>
+
+  <!-- JavaScript -->
+  <script src="main.js"></script>
+</body>
+</html>
