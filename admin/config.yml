@@ -87,8 +87,14 @@ collections:
         media_folder: "/images/site"
         public_folder: "/images/site"
         fields:
-          - label: Hero Photo
+          - label: Hero Photo (Desktop)
             name: heroImage
             widget: image
             accept: "image/jpeg,image/png,image/webp"
-            hint: "Pinned background photo for the homepage — stays fixed regardless of what's in the Photography gallery. Replace it here anytime."
+            hint: "Pinned homepage background for desktop/wide screens — landscape, roughly 16:9. Stays fixed regardless of what's in the Photography gallery."
+          - label: Hero Photo (Mobile)
+            name: heroImageMobile
+            widget: image
+            accept: "image/jpeg,image/png,image/webp"
+            required: false
+            hint: "Optional — used on narrow/mobile screens instead of the desktop photo. Portrait, roughly 4:5 to 9:16. Leave empty to reuse the desktop photo everywhere."

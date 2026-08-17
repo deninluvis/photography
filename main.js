@@ -224,26 +224,29 @@ lightbox.addEventListener('touchend', e => {
   if (Math.abs(dx) > 50) { dx > 0 ? prevImage() : nextImage(); }
 }, { passive: true });
 
-// ── Hero background: a pinned Homepage photo (set via the CMS) if one exists,
-// otherwise fall back to featuring the latest Photography shot ──
-async function fetchPinnedHeroUrl() {
+// ── Hero background: pinned Homepage photo(s) set via the CMS, with an
+// optional separate mobile crop — falls back to the latest Photography
+// shot if no desktop pin exists ──
+async function fetchPinnedHero() {
   try {
     const res = await fetch(`https://raw.githubusercontent.com/${REPO}/${BRANCH}/content/home.json`);
-    if (!res.ok) return null;
+    if (!res.ok) return {};
     const data = await res.json();
-    if (!data.heroImage) return null;
-    return rawUrl(resolveAssetPath(data.heroImage, 'images/site'));
+    return {
+      desktop: data.heroImage ? rawUrl(resolveAssetPath(data.heroImage, 'images/site')) : null,
+      mobile: data.heroImageMobile ? rawUrl(resolveAssetPath(data.heroImageMobile, 'images/site')) : null,
+    };
   } catch (e) {
-    return null;
+    return {};
   }
 }
 
-function applyHeroImage(url) {
+function applyHeroImage(url, cssVar) {
   if (!url) return;
   const hero = document.getElementById('hero');
   const im = new Image();
   im.onload = () => {
-    hero.style.setProperty('--hero-image', `url("${url}")`);
+    hero.style.setProperty(cssVar, `url("${url}")`);
     hero.classList.add('has-image');
   };
   im.src = url;
@@ -251,12 +254,13 @@ function applyHeroImage(url) {
 
 // ── Init ──
 (async () => {
-  const [photos, engineering, pinnedHeroUrl] = await Promise.all([
+  const [photos, engineering, pinnedHero] = await Promise.all([
     fetchGalleryEntries('photography'),
     fetchGalleryEntries('engineering'),
-    fetchPinnedHeroUrl(),
+    fetchPinnedHero(),
   ]);
   renderGallery('photography', photos);
   renderGallery('engineering', engineering);
-  applyHeroImage(pinnedHeroUrl || (photos[0] && photos[0].url));
+  applyHeroImage(pinnedHero.desktop || (photos[0] && photos[0].url), '--hero-image');
+  applyHeroImage(pinnedHero.mobile, '--hero-image-mobile');
 })();
