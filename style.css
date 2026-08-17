@@ -436,6 +436,7 @@ h1.hero-name {
 
 /* ── Responsive ── */
 @media (max-width: 700px) {
+  #hero::before { background-image: var(--hero-image-mobile, var(--hero-image, none)); }
   nav, nav.scrolled { padding: 1.2rem 1.5rem; }
   .nav-links {
     position: fixed;
