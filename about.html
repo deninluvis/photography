@@ -3,27 +3,25 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Denin Luvis</title>
-  <meta name="description" content="Denin Luvis — photography and personal engineering design projects, just for fun." />
+  <title>About — Denin Luvis</title>
+  <meta name="description" content="A bit about Denin Luvis — mechanical design engineer by trade, photographer and hobbyist designer off the clock." />
 
-  <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
 
-  <!-- Stylesheet -->
   <link rel="stylesheet" href="style.css" />
 </head>
-<body class="is-home">
+<body>
 
   <!-- ── Navigation ── -->
   <nav id="nav">
     <a href="/" class="nav-logo">Denin Luvis</a>
     <ul class="nav-links" id="nav-links">
-      <li><a href="/" class="active">Home</a></li>
+      <li><a href="/">Home</a></li>
       <li><a href="/photography.html">Photography</a></li>
       <li><a href="/engineering.html">Engineering</a></li>
-      <li><a href="/about.html">About</a></li>
+      <li><a href="/about.html" class="active">About</a></li>
       <li><a href="/contact.html">Contact</a></li>
     </ul>
     <button class="nav-toggle" id="nav-toggle" aria-label="Toggle menu" aria-expanded="false">
@@ -31,12 +29,16 @@
     </button>
   </nav>
 
-  <!-- ── Hero ── -->
-  <section id="hero">
-    <div class="hero-content">
-      <h1 class="hero-name">Denin<br>Luvis</h1>
-      <p class="hero-role">Hobbyist Photographer &amp; Design Engineer</p>
-      <p class="hero-sub">By day I design mechanical parts for a living. Off the clock, I'm either chasing good light with a camera or sketching things I don't need to build.</p>
+  <!-- ── About ── -->
+  <section id="about">
+    <div class="section-inner">
+      <p class="eyebrow reveal mono">03 — About</p>
+      <h2 class="section-title reveal reveal-delay-1">A bit about me</h2>
+      <div style="margin-top: 2.2rem;">
+        <p class="about-text reveal reveal-delay-1">I'm Denin — a <strong>mechanical design engineer</strong> by trade, based in Scarborough, Ontario. I'm a Certified SolidWorks Professional, which mostly means I can't help but model things I probably don't need to.</p>
+        <p class="about-text reveal reveal-delay-2">Outside of work, I split my free time between two things that scratch the same itch: <strong>photography</strong> and <strong>personal engineering projects</strong>. One is about noticing light and moments, the other about noticing how things fit together — both are really just an excuse to keep making.</p>
+        <p class="about-text reveal reveal-delay-2">This site is where I put both, with no particular schedule. New stuff shows up whenever I get around to it.</p>
+      </div>
     </div>
   </section>
 

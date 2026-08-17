@@ -57,10 +57,13 @@
       z-index: 100;
       display: flex;
       align-items: center;
+      justify-content: space-between;
       padding: 1.6rem 3.5rem;
-      border-bottom: 1px solid var(--line);
-      background: rgba(var(--bg-rgb),0.82);
-      backdrop-filter: blur(14px);
+      border-bottom: 1px solid transparent;
+      background: rgba(var(--bg-rgb),0.55);
+      backdrop-filter: blur(22px) saturate(160%);
+      -webkit-backdrop-filter: blur(22px) saturate(160%);
+      box-shadow: inset 0 1px 0 rgba(245,245,240,0.08), 0 12px 40px -16px rgba(0,0,0,0.55);
     }
     .nav-logo {
       font-size: 0.8rem;
@@ -69,6 +72,62 @@
       text-transform: uppercase;
       color: var(--ink);
       text-decoration: none;
+    }
+    .nav-links { display: flex; align-items: center; gap: 2.4rem; list-style: none; }
+    .nav-links a {
+      font-size: 0.85rem;
+      font-weight: 400;
+      letter-spacing: 0.01em;
+      color: var(--ink-mid);
+      text-decoration: none;
+      transition: color 0.2s;
+      position: relative;
+      padding-bottom: 0.3rem;
+    }
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0;
+      width: 0; height: 1px;
+      background: var(--ink);
+      transition: width 0.3s cubic-bezier(.16,.8,.24,1);
+    }
+    .nav-links a:hover { color: var(--ink); }
+    .nav-links a:hover::after { width: 100%; }
+
+    .nav-toggle {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0.4rem;
+    }
+    .nav-toggle span { width: 20px; height: 1.5px; background: var(--ink); transition: transform 0.3s, opacity 0.3s; }
+    .nav-toggle.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+    .nav-toggle.open span:nth-child(2) { opacity: 0; }
+    .nav-toggle.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+    @media (max-width: 700px) {
+      nav { padding: 1.2rem 1.5rem; }
+      .nav-links {
+        position: fixed;
+        top: 64px; left: 0; right: 0;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1.4rem;
+        background: var(--surface);
+        border-bottom: 1px solid var(--line-strong);
+        box-shadow: inset 0 1px 0 rgba(245,245,240,0.06), 0 16px 40px -16px rgba(0,0,0,0.55);
+        padding: 1.6rem 1.5rem 2rem;
+        transform: translateY(-8px);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.25s, transform 0.25s;
+      }
+      .nav-links.open { opacity: 1; transform: none; pointer-events: auto; }
+      .nav-toggle { display: flex; }
     }
 
     .container {
@@ -158,18 +217,37 @@
 
   <nav>
     <a href="/" class="nav-logo">Denin Luvis</a>
+    <ul class="nav-links" id="nav-links">
+      <li><a href="/">Home</a></li>
+      <li><a href="/photography.html">Photography</a></li>
+      <li><a href="/engineering.html">Engineering</a></li>
+      <li><a href="/about.html">About</a></li>
+      <li><a href="/contact.html">Contact</a></li>
+    </ul>
+    <button class="nav-toggle" id="nav-toggle" aria-label="Toggle menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
   </nav>
 
   <div class="container">
     <p class="error-label">Error · Page not found</p>
     <p class="error-number">4<span class="accent">0</span>4</p>
-    <h1 class="error-heading">Lost in the <span class="accent-text">blueprint.</span></h1>
+    <h1 class="error-heading">This page never got <span class="accent-text">developed.</span></h1>
     <p class="error-sub">This page doesn't exist — or it's been moved. Let's get you back to something that does.</p>
     <div class="error-actions">
       <a href="/" class="btn btn-primary">← Back to home</a>
-      <a href="/#contact" class="btn btn-ghost">Contact me</a>
+      <a href="/contact.html" class="btn btn-ghost">Contact me</a>
     </div>
   </div>
 
+  <script>
+    const navToggle = document.getElementById('nav-toggle');
+    const navLinks = document.getElementById('nav-links');
+    navToggle.addEventListener('click', () => {
+      const open = navLinks.classList.toggle('open');
+      navToggle.classList.toggle('open', open);
+      navToggle.setAttribute('aria-expanded', String(open));
+    });
+  </script>
 </body>
 </html>

@@ -1,6 +1,8 @@
 /* =============================================
    Portfolio — Denin Luvis
    main.js — nav, reveal, and auto-populating galleries
+   Shared across all pages; every page-specific block below
+   guards itself against that page not having the element.
    ============================================= */
 
 const REPO = 'deninluvis/photography';
@@ -155,13 +157,9 @@ function renderGallery(sectionId, entries) {
   });
 }
 
-// ── Lightbox ──
+// ── Lightbox (only present on pages with a gallery) ──
 const lightbox = document.getElementById('lightbox');
-const lightboxImg = document.getElementById('lightbox-img');
-const lightboxCaption = document.getElementById('lightbox-caption');
-const lightboxCounter = document.getElementById('lightbox-counter');
-const lightboxDetail = document.getElementById('lightbox-detail');
-const lightboxLink = document.getElementById('lightbox-link');
+let lightboxImg, lightboxCaption, lightboxCounter, lightboxDetail, lightboxLink;
 let lightboxEntries = [];
 let lightboxIndex = 0;
 
@@ -205,28 +203,36 @@ function closeLightbox() {
 function nextImage() { lightboxIndex = (lightboxIndex + 1) % lightboxEntries.length; showLightboxImage(); }
 function prevImage() { lightboxIndex = (lightboxIndex - 1 + lightboxEntries.length) % lightboxEntries.length; showLightboxImage(); }
 
-document.getElementById('lightbox-close').addEventListener('click', closeLightbox);
-document.getElementById('lightbox-next').addEventListener('click', nextImage);
-document.getElementById('lightbox-prev').addEventListener('click', prevImage);
-lightbox.addEventListener('click', e => { if (e.target === lightbox) closeLightbox(); });
+if (lightbox) {
+  lightboxImg = document.getElementById('lightbox-img');
+  lightboxCaption = document.getElementById('lightbox-caption');
+  lightboxCounter = document.getElementById('lightbox-counter');
+  lightboxDetail = document.getElementById('lightbox-detail');
+  lightboxLink = document.getElementById('lightbox-link');
 
-document.addEventListener('keydown', e => {
-  if (!lightbox.classList.contains('open')) return;
-  if (e.key === 'Escape') closeLightbox();
-  if (e.key === 'ArrowRight') nextImage();
-  if (e.key === 'ArrowLeft') prevImage();
-});
+  document.getElementById('lightbox-close').addEventListener('click', closeLightbox);
+  document.getElementById('lightbox-next').addEventListener('click', nextImage);
+  document.getElementById('lightbox-prev').addEventListener('click', prevImage);
+  lightbox.addEventListener('click', e => { if (e.target === lightbox) closeLightbox(); });
 
-let touchStartX = 0;
-lightbox.addEventListener('touchstart', e => { touchStartX = e.changedTouches[0].clientX; }, { passive: true });
-lightbox.addEventListener('touchend', e => {
-  const dx = e.changedTouches[0].clientX - touchStartX;
-  if (Math.abs(dx) > 50) { dx > 0 ? prevImage() : nextImage(); }
-}, { passive: true });
+  document.addEventListener('keydown', e => {
+    if (!lightbox.classList.contains('open')) return;
+    if (e.key === 'Escape') closeLightbox();
+    if (e.key === 'ArrowRight') nextImage();
+    if (e.key === 'ArrowLeft') prevImage();
+  });
 
-// ── Hero background: pinned Homepage photo(s) set via the CMS, with an
-// optional separate mobile crop — falls back to the latest Photography
-// shot if no desktop pin exists ──
+  let touchStartX = 0;
+  lightbox.addEventListener('touchstart', e => { touchStartX = e.changedTouches[0].clientX; }, { passive: true });
+  lightbox.addEventListener('touchend', e => {
+    const dx = e.changedTouches[0].clientX - touchStartX;
+    if (Math.abs(dx) > 50) { dx > 0 ? prevImage() : nextImage(); }
+  }, { passive: true });
+}
+
+// ── Hero background (only present on the home page): pinned Homepage
+// photo(s) set via the CMS, with an optional separate mobile crop —
+// falls back to featuring the latest Photography shot if no pin exists ──
 async function fetchPinnedHero() {
   try {
     const res = await fetch(`https://raw.githubusercontent.com/${REPO}/${BRANCH}/content/home.json`);
@@ -252,15 +258,22 @@ function applyHeroImage(url, cssVar) {
   im.src = url;
 }
 
-// ── Init ──
+// ── Init: fetch only what the current page actually needs ──
 (async () => {
+  const heroEl = document.getElementById('hero');
+  const photoSection = document.getElementById('photography');
+  const engSection = document.getElementById('engineering');
+
   const [photos, engineering, pinnedHero] = await Promise.all([
-    fetchGalleryEntries('photography'),
-    fetchGalleryEntries('engineering'),
-    fetchPinnedHero(),
+    (photoSection || heroEl) ? fetchGalleryEntries('photography') : Promise.resolve([]),
+    engSection ? fetchGalleryEntries('engineering') : Promise.resolve([]),
+    heroEl ? fetchPinnedHero() : Promise.resolve({}),
   ]);
-  renderGallery('photography', photos);
-  renderGallery('engineering', engineering);
-  applyHeroImage(pinnedHero.desktop || (photos[0] && photos[0].url), '--hero-image');
-  applyHeroImage(pinnedHero.mobile, '--hero-image-mobile');
+
+  if (photoSection) renderGallery('photography', photos);
+  if (engSection) renderGallery('engineering', engineering);
+  if (heroEl) {
+    applyHeroImage(pinnedHero.desktop || (photos[0] && photos[0].url), '--hero-image');
+    applyHeroImage(pinnedHero.mobile, '--hero-image-mobile');
+  }
 })();
