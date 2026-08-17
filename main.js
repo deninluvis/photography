@@ -65,6 +65,15 @@ function rawUrl(path) {
   return `https://raw.githubusercontent.com/${REPO}/${BRANCH}/${path.split('/').map(encodeURIComponent).join('/')}`;
 }
 
+// The CMS stores image fields relative to wherever that entry's media_folder
+// points (usually just a bare filename), not always a full repo path —
+// normalize whatever it gives us against the field's expected folder.
+function resolveAssetPath(raw, fallbackFolder) {
+  if (!raw) return null;
+  const clean = raw.replace(/^\.?\//, '');
+  return clean.includes('/') ? clean : `${fallbackFolder}/${clean}`;
+}
+
 async function fetchGalleryEntries(folder) {
   const cacheKey = `gallery-cache-v2-${folder}`;
   try {
@@ -86,9 +95,7 @@ async function fetchGalleryEntries(folder) {
         if (!r.ok) return null;
         const data = await r.json();
         if (!data.image) return null;
-        // The CMS stores the image field relative to the entry's own folder
-        // (just a bare filename), not a full repo path — resolve it here.
-        const imagePath = data.image.includes('/') ? data.image : `images/${folder}/${data.image}`;
+        const imagePath = resolveAssetPath(data.image, `images/${folder}`);
         return {
           key: item.name,
           url: rawUrl(imagePath),
@@ -217,26 +224,39 @@ lightbox.addEventListener('touchend', e => {
   if (Math.abs(dx) > 50) { dx > 0 ? prevImage() : nextImage(); }
 }, { passive: true });
 
-// ── Hero background: feature the latest photography shot once available ──
-function setHeroBackground(entries) {
-  if (!entries.length) return;
+// ── Hero background: a pinned Homepage photo (set via the CMS) if one exists,
+// otherwise fall back to featuring the latest Photography shot ──
+async function fetchPinnedHeroUrl() {
+  try {
+    const res = await fetch(`https://raw.githubusercontent.com/${REPO}/${BRANCH}/content/home.json`);
+    if (!res.ok) return null;
+    const data = await res.json();
+    if (!data.heroImage) return null;
+    return rawUrl(resolveAssetPath(data.heroImage, 'images/site'));
+  } catch (e) {
+    return null;
+  }
+}
+
+function applyHeroImage(url) {
+  if (!url) return;
   const hero = document.getElementById('hero');
-  const pick = entries[0];
   const im = new Image();
   im.onload = () => {
-    hero.style.setProperty('--hero-image', `url("${pick.url}")`);
+    hero.style.setProperty('--hero-image', `url("${url}")`);
     hero.classList.add('has-image');
   };
-  im.src = pick.url;
+  im.src = url;
 }
 
 // ── Init ──
 (async () => {
-  const [photos, engineering] = await Promise.all([
+  const [photos, engineering, pinnedHeroUrl] = await Promise.all([
     fetchGalleryEntries('photography'),
     fetchGalleryEntries('engineering'),
+    fetchPinnedHeroUrl(),
   ]);
   renderGallery('photography', photos);
   renderGallery('engineering', engineering);
-  setHeroBackground(photos);
+  applyHeroImage(pinnedHeroUrl || (photos[0] && photos[0].url));
 })();
