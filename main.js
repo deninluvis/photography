@@ -259,19 +259,28 @@ function applyHeroImage(url, cssVar) {
 }
 
 // ── Init: fetch only what the current page actually needs ──
+const LATEST_PREVIEW_COUNT = 6;
+
 (async () => {
   const heroEl = document.getElementById('hero');
   const photoSection = document.getElementById('photography');
   const engSection = document.getElementById('engineering');
+  const latestPhotoSection = document.getElementById('latest-photography');
+  const latestEngSection = document.getElementById('latest-engineering');
+
+  const needPhotos = photoSection || heroEl || latestPhotoSection;
+  const needEngineering = engSection || latestEngSection;
 
   const [photos, engineering, pinnedHero] = await Promise.all([
-    (photoSection || heroEl) ? fetchGalleryEntries('photography') : Promise.resolve([]),
-    engSection ? fetchGalleryEntries('engineering') : Promise.resolve([]),
+    needPhotos ? fetchGalleryEntries('photography') : Promise.resolve([]),
+    needEngineering ? fetchGalleryEntries('engineering') : Promise.resolve([]),
     heroEl ? fetchPinnedHero() : Promise.resolve({}),
   ]);
 
   if (photoSection) renderGallery('photography', photos);
   if (engSection) renderGallery('engineering', engineering);
+  if (latestPhotoSection) renderGallery('latest-photography', photos.slice(0, LATEST_PREVIEW_COUNT));
+  if (latestEngSection) renderGallery('latest-engineering', engineering.slice(0, LATEST_PREVIEW_COUNT));
   if (heroEl) {
     applyHeroImage(pinnedHero.desktop || (photos[0] && photos[0].url), '--hero-image');
     applyHeroImage(pinnedHero.mobile, '--hero-image-mobile');
