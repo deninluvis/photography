@@ -305,6 +305,24 @@ h1.hero-name {
 }
 .gallery-tile:hover .gallery-tile-caption { opacity: 1; transform: none; }
 
+/* ── Highlighted photos (home page): fixed bento-style slots instead of
+   the freeform masonry — 3 portrait (tall) + 3 landscape (wide) tiles ── */
+.highlights-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-auto-rows: 150px;
+  grid-auto-flow: dense;
+  gap: 0.65rem;
+}
+.highlight-tile.portrait { grid-row: span 2; }
+.highlight-tile.landscape { grid-column: span 2; }
+.highlight-tile img { height: 100%; object-fit: cover; }
+@media (max-width: 900px) {
+  .highlights-grid { grid-template-columns: repeat(2, 1fr); grid-auto-rows: 130px; }
+  .highlight-tile.landscape { grid-column: span 2; }
+  .highlight-tile.portrait { grid-column: span 1; grid-row: span 2; }
+}
+
 .gallery-empty {
   border: 1px dashed var(--line-strong);
   border-radius: var(--radius-lg);

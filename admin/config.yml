@@ -98,3 +98,25 @@ collections:
             accept: "image/jpeg,image/png,image/webp"
             required: false
             hint: "Optional — used on narrow/mobile screens instead of the desktop photo. Portrait, roughly 4:5 to 9:16. Leave empty to reuse the desktop photo everywhere."
+          - label: Highlighted Photos (Home Page)
+            name: highlights
+            widget: list
+            min: 6
+            max: 6
+            summary: "{{fields.orientation}} — {{fields.caption}}"
+            hint: "Exactly 6 photos — 3 portrait and 3 landscape — for the featured grid on the home page. The grid is built from fixed slots, so photos should roughly match the ratio for whichever orientation you pick, or they'll get cropped to fit."
+            fields:
+              - label: Photo
+                name: image
+                widget: image
+                accept: "image/jpeg,image/png,image/webp"
+              - label: Orientation
+                name: orientation
+                widget: select
+                options:
+                  - { label: "Portrait — roughly 4:5, taller than wide", value: portrait }
+                  - { label: "Landscape — roughly 3:2, wider than tall", value: landscape }
+              - label: Caption (optional)
+                name: caption
+                widget: string
+                required: false
