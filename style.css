@@ -339,6 +339,16 @@ h1.hero-name {
 
 .site-footer { background: var(--bg); padding: 4rem 3.5rem 4.5rem; display: flex; justify-content: center; }
 
+/* Home page: give the footer enough height that the hero has fully
+   scrolled out of view by the time it comes into frame — otherwise, on
+   this short hero+footer-only page, the fixed nav ends up overlapping
+   and clipping the hero heading right as you reach the footer. */
+body.is-home .site-footer {
+  min-height: 100vh;
+  align-items: flex-end;
+  padding-bottom: 4.5rem;
+}
+
 .footer-bar {
   margin: 0 auto;
   padding-top: 2rem;
