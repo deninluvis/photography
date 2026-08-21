@@ -230,20 +230,33 @@ if (lightbox) {
   }, { passive: true });
 }
 
-// ── Hero background (only present on the home page): pinned Homepage
-// photo(s) set via the CMS, with an optional separate mobile crop —
-// falls back to featuring the latest Photography shot if no pin exists ──
-async function fetchPinnedHero() {
+// ── Home page settings (content/home.json, managed via the CMS):
+// pinned hero photo(s), plus the curated Highlighted Photos list ──
+async function fetchHomeSettings() {
   try {
     const res = await fetch(`https://raw.githubusercontent.com/${REPO}/${BRANCH}/content/home.json`);
-    if (!res.ok) return {};
+    if (!res.ok) return { hero: {}, highlights: [] };
     const data = await res.json();
+    const highlights = Array.isArray(data.highlights) ? data.highlights
+      .filter(h => h && h.image && (h.orientation === 'portrait' || h.orientation === 'landscape'))
+      .map(h => {
+        const imagePath = resolveAssetPath(h.image, 'images/site');
+        return {
+          url: rawUrl(imagePath),
+          title: h.caption || formatCaption(imagePath.split('/').pop()),
+          orientation: h.orientation,
+          location: '', camera: '', description: '', link: '',
+        };
+      }) : [];
     return {
-      desktop: data.heroImage ? rawUrl(resolveAssetPath(data.heroImage, 'images/site')) : null,
-      mobile: data.heroImageMobile ? rawUrl(resolveAssetPath(data.heroImageMobile, 'images/site')) : null,
+      hero: {
+        desktop: data.heroImage ? rawUrl(resolveAssetPath(data.heroImage, 'images/site')) : null,
+        mobile: data.heroImageMobile ? rawUrl(resolveAssetPath(data.heroImageMobile, 'images/site')) : null,
+      },
+      highlights,
     };
   } catch (e) {
-    return {};
+    return { hero: {}, highlights: [] };
   }
 }
 
@@ -258,6 +271,44 @@ function applyHeroImage(url, cssVar) {
   im.src = url;
 }
 
+// Interleave portrait/landscape (rather than trusting CMS entry order) so
+// the fixed bento slots in the grid pack cleanly regardless of the order
+// photos were added in.
+function interleaveByOrientation(entries) {
+  const portraits = entries.filter(e => e.orientation === 'portrait');
+  const landscapes = entries.filter(e => e.orientation === 'landscape');
+  const ordered = [];
+  const max = Math.max(portraits.length, landscapes.length);
+  for (let i = 0; i < max; i++) {
+    if (portraits[i]) ordered.push(portraits[i]);
+    if (landscapes[i]) ordered.push(landscapes[i]);
+  }
+  return ordered;
+}
+
+function renderHighlights(sectionId, rawEntries) {
+  const section = document.getElementById(sectionId);
+  if (!section) return;
+  const grid = section.querySelector('.highlights-grid');
+  const empty = section.querySelector('.gallery-empty');
+  if (!rawEntries.length) {
+    if (empty) empty.hidden = false;
+    return;
+  }
+  if (empty) empty.hidden = true;
+  const entries = interleaveByOrientation(rawEntries);
+  grid.innerHTML = entries.map((entry, i) => `
+    <button class="gallery-tile highlight-tile ${entry.orientation} reveal" data-index="${i}" aria-label="Open ${escapeHtml(entry.title)}">
+      <img src="${entry.url}" alt="${escapeHtml(entry.title)}" loading="lazy" />
+      <span class="gallery-tile-caption mono">${escapeHtml(entry.title)}</span>
+    </button>
+  `).join('');
+  grid.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+  grid.querySelectorAll('.gallery-tile').forEach(tile => {
+    tile.addEventListener('click', () => openLightbox(entries, Number(tile.dataset.index)));
+  });
+}
+
 // ── Init: fetch only what the current page actually needs ──
 const LATEST_PREVIEW_COUNT = 6;
 
@@ -265,24 +316,25 @@ const LATEST_PREVIEW_COUNT = 6;
   const heroEl = document.getElementById('hero');
   const photoSection = document.getElementById('photography');
   const engSection = document.getElementById('engineering');
-  const latestPhotoSection = document.getElementById('latest-photography');
+  const highlightsSection = document.getElementById('highlights');
   const latestEngSection = document.getElementById('latest-engineering');
 
-  const needPhotos = photoSection || heroEl || latestPhotoSection;
+  const needPhotos = photoSection || heroEl;
   const needEngineering = engSection || latestEngSection;
+  const needHomeSettings = heroEl || highlightsSection;
 
-  const [photos, engineering, pinnedHero] = await Promise.all([
+  const [photos, engineering, homeSettings] = await Promise.all([
     needPhotos ? fetchGalleryEntries('photography') : Promise.resolve([]),
     needEngineering ? fetchGalleryEntries('engineering') : Promise.resolve([]),
-    heroEl ? fetchPinnedHero() : Promise.resolve({}),
+    needHomeSettings ? fetchHomeSettings() : Promise.resolve({ hero: {}, highlights: [] }),
   ]);
 
   if (photoSection) renderGallery('photography', photos);
   if (engSection) renderGallery('engineering', engineering);
-  if (latestPhotoSection) renderGallery('latest-photography', photos.slice(0, LATEST_PREVIEW_COUNT));
+  if (highlightsSection) renderHighlights('highlights', homeSettings.highlights);
   if (latestEngSection) renderGallery('latest-engineering', engineering.slice(0, LATEST_PREVIEW_COUNT));
   if (heroEl) {
-    applyHeroImage(pinnedHero.desktop || (photos[0] && photos[0].url), '--hero-image');
-    applyHeroImage(pinnedHero.mobile, '--hero-image-mobile');
+    applyHeroImage(homeSettings.hero.desktop || (photos[0] && photos[0].url), '--hero-image');
+    applyHeroImage(homeSettings.hero.mobile, '--hero-image-mobile');
   }
 })();
