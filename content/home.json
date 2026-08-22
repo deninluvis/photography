@@ -1,4 +1,21 @@
 {
   "heroImage": "desktop.jpg",
-  "heroImageMobile": "IMG_7625.jpg"
+  "heroImageMobile": "IMG_7625.jpg",
+  "highlights": [
+    {
+      "image": "/images/site/IMG_8092.dng",
+      "orientation": "portrait",
+      "caption": ""
+    },
+    {
+      "image": "/images/site/IMG_8863.jpeg",
+      "orientation": "portrait",
+      "caption": ""
+    },
+    {
+      "image": "/images/site/IMG_8864.jpeg",
+      "orientation": "portrait",
+      "caption": ""
+    }
+  ]
 }
