@@ -3,11 +3,11 @@
   "heroImageMobile": "IMG_7625.jpg",
   "highlightsPortrait": [
     {
-      "image": "IMG_8092.jpeg",
+      "image": "IMG_8802.jpeg",
       "caption": ""
     },
     {
-      "image": "IMG_8863.jpeg",
+      "image": "IMG_9665.jpeg",
       "caption": ""
     },
     {
@@ -15,5 +15,10 @@
       "caption": ""
     }
   ],
-  "highlightsLandscape": []
+  "highlightsLandscape": [
+    {
+      "image": "DSC02757.jpeg",
+      "caption": ""
+    }
+  ]
 }
