@@ -98,7 +98,12 @@ collections:
             accept: "image/jpeg,image/png,image/webp"
             required: false
             hint: "Optional — used on narrow/mobile screens instead of the desktop photo. Portrait, roughly 4:5 to 9:16. Leave empty to reuse the desktop photo everywhere."
-          - label: Highlighted Photos — Portrait (Home Page)
+
+      - name: highlights
+        label: Highlighted Photos
+        file: content/highlights.json
+        fields:
+          - label: Portrait Photos
             name: highlightsPortrait
             widget: list
             min: 3
@@ -113,12 +118,8 @@ collections:
                 search_fields: [title]
                 display_fields: [title]
                 value_field: image
-                hint: "Search by the title you gave it in the Photography collection."
-              - label: Caption (optional)
-                name: caption
-                widget: string
-                required: false
-          - label: Highlighted Photos — Landscape (Home Page)
+                hint: "Search by the title you gave it in the Photography collection — its caption there is reused here too."
+          - label: Landscape Photos
             name: highlightsLandscape
             widget: list
             min: 3
@@ -133,8 +134,4 @@ collections:
                 search_fields: [title]
                 display_fields: [title]
                 value_field: image
-                hint: "Search by the title you gave it in the Photography collection."
-              - label: Caption (optional)
-                name: caption
-                widget: string
-                required: false
+                hint: "Search by the title you gave it in the Photography collection — its caption there is reused here too."
