@@ -287,21 +287,10 @@ function applyHeroImage(url, cssVar) {
   im.src = url;
 }
 
-// Interleave portrait/landscape (rather than trusting CMS entry order) so
-// the fixed bento slots in the grid pack cleanly regardless of the order
-// photos were added in.
-function interleaveByOrientation(entries) {
-  const portraits = entries.filter(e => e.orientation === 'portrait');
-  const landscapes = entries.filter(e => e.orientation === 'landscape');
-  const ordered = [];
-  const max = Math.max(portraits.length, landscapes.length);
-  for (let i = 0; i < max; i++) {
-    if (portraits[i]) ordered.push(portraits[i]);
-    if (landscapes[i]) ordered.push(landscapes[i]);
-  }
-  return ordered;
-}
-
+// Split into 3 columns of [landscape, portrait] pairs (offset for the
+// middle column) so each column's height is just landscape-ratio +
+// portrait-ratio regardless of order — always self-consistent, no
+// fixed pixel guessing needed.
 function renderHighlights(sectionId, rawEntries) {
   const section = document.getElementById(sectionId);
   if (!section) return;
@@ -312,13 +301,23 @@ function renderHighlights(sectionId, rawEntries) {
     return;
   }
   if (empty) empty.hidden = true;
-  const entries = interleaveByOrientation(rawEntries);
-  grid.innerHTML = entries.map((entry, i) => `
-    <button class="gallery-tile highlight-tile ${entry.orientation} reveal" data-index="${i}" aria-label="Open ${escapeHtml(entry.title)}">
+
+  const portraits = rawEntries.filter(e => e.orientation === 'portrait');
+  const landscapes = rawEntries.filter(e => e.orientation === 'landscape');
+  const columns = [
+    [landscapes[0], portraits[0]],
+    [portraits[1], landscapes[1]],
+    [landscapes[2], portraits[2]],
+  ].map(col => col.filter(Boolean));
+  const entries = columns.flat();
+
+  const tileHtml = entry => `
+    <button class="gallery-tile highlight-tile ${entry.orientation} reveal" data-index="${entries.indexOf(entry)}" aria-label="Open ${escapeHtml(entry.title)}">
       <img src="${entry.url}" alt="${escapeHtml(entry.title)}" loading="lazy" />
       <span class="gallery-tile-caption mono">${escapeHtml(entry.title)}</span>
     </button>
-  `).join('');
+  `;
+  grid.innerHTML = columns.map(col => `<div class="highlight-column">${col.map(tileHtml).join('')}</div>`).join('');
   grid.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
   grid.querySelectorAll('.gallery-tile').forEach(tile => {
     tile.addEventListener('click', () => openLightbox(entries, Number(tile.dataset.index)));

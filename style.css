@@ -310,22 +310,27 @@ h1.hero-name {
 }
 .gallery-tile:hover .gallery-tile-caption { opacity: 1; transform: none; }
 
-/* ── Highlighted photos (home page): fixed bento-style slots instead of
-   the freeform masonry — 3 portrait (tall) + 3 landscape (wide) tiles ── */
+/* ── Highlighted photos (home page): 3 columns, each holding one
+   landscape (3:2) + one portrait (2:3) tile, offset per column so the
+   split line zigzags — heights come straight from the aspect ratios,
+   so every column ends up the same total height automatically ── */
 .highlights-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  grid-auto-rows: 150px;
-  grid-auto-flow: dense;
+  display: flex;
   gap: 0.65rem;
 }
-.highlight-tile.portrait { grid-row: span 2; }
-.highlight-tile.landscape { grid-column: span 2; }
-.highlight-tile img { height: 100%; object-fit: cover; }
+.highlight-column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  min-width: 0;
+}
+.highlight-tile.landscape { aspect-ratio: 3 / 2; }
+.highlight-tile.portrait { aspect-ratio: 2 / 3; }
+.highlight-tile img { width: 100%; height: 100%; object-fit: cover; }
 @media (max-width: 900px) {
-  .highlights-grid { grid-template-columns: repeat(2, 1fr); grid-auto-rows: 130px; }
-  .highlight-tile.landscape { grid-column: span 2; }
-  .highlight-tile.portrait { grid-column: span 1; grid-row: span 2; }
+  .highlights-grid { flex-direction: column; }
+  .highlight-column { width: 100%; }
 }
 
 .gallery-empty {
