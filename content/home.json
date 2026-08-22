@@ -1,21 +1,19 @@
 {
   "heroImage": "desktop.jpg",
   "heroImageMobile": "IMG_7625.jpg",
-  "highlights": [
+  "highlightsPortrait": [
     {
-      "image": "/images/site/IMG_8092.dng",
-      "orientation": "portrait",
+      "image": "IMG_8092.jpeg",
       "caption": ""
     },
     {
-      "image": "/images/site/IMG_8863.jpeg",
-      "orientation": "portrait",
+      "image": "IMG_8863.jpeg",
       "caption": ""
     },
     {
-      "image": "/images/site/IMG_8864.jpeg",
-      "orientation": "portrait",
+      "image": "IMG_8864.jpeg",
       "caption": ""
     }
-  ]
+  ],
+  "highlightsLandscape": []
 }

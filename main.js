@@ -238,17 +238,22 @@ async function fetchHomeSettings() {
     const res = await fetch(`https://raw.githubusercontent.com/${REPO}/${BRANCH}/content/home.json`);
     if (!res.ok) return { hero: {}, highlights: [] };
     const data = await res.json();
-    const highlights = Array.isArray(data.highlights) ? data.highlights
-      .filter(h => h && h.image && (h.orientation === 'portrait' || h.orientation === 'landscape'))
+    const toHighlightEntries = (list, orientation) => (Array.isArray(list) ? list : [])
+      .filter(h => h && h.image)
+      .slice(0, 3)
       .map(h => {
-        const imagePath = resolveAssetPath(h.image, 'images/site');
+        const imagePath = resolveAssetPath(h.image, 'images/photography');
         return {
           url: rawUrl(imagePath),
           title: h.caption || formatCaption(imagePath.split('/').pop()),
-          orientation: h.orientation,
+          orientation,
           location: '', camera: '', description: '', link: '',
         };
-      }) : [];
+      });
+    const highlights = [
+      ...toHighlightEntries(data.highlightsPortrait, 'portrait'),
+      ...toHighlightEntries(data.highlightsLandscape, 'landscape'),
+    ];
     return {
       hero: {
         desktop: data.heroImage ? rawUrl(resolveAssetPath(data.heroImage, 'images/site')) : null,
