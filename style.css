@@ -42,6 +42,10 @@ body {
 .mono { font-family: 'JetBrains Mono', ui-monospace, monospace; }
 a { color: inherit; }
 
+h1, h2, h3, .nav-logo {
+  font-family: 'Space Grotesk', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
 /* ── Nav ── */
 nav {
   position: fixed;
@@ -193,11 +197,12 @@ section { position: relative; }
 }
 .hero-content { position: relative; z-index: 1; max-width: 900px; }
 h1.hero-name {
-  font-size: clamp(2.8rem, 7.5vw, 6rem);
-  font-weight: 200;
-  line-height: 1.12;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
+  font-family: 'Tangerine', 'Space Grotesk', cursive;
+  font-size: clamp(4.5rem, 11vw, 9rem);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0;
+  text-transform: none;
   opacity: 0;
   transform: translateY(22px);
   animation: fadeUp 0.8s 0.22s forwards;
@@ -491,7 +496,9 @@ h1.hero-name {
     flex-direction: column;
     align-items: flex-start;
     gap: 1.4rem;
-    background: var(--surface);
+    background: rgba(var(--bg-rgb),0.55);
+    backdrop-filter: blur(28px) saturate(180%);
+    -webkit-backdrop-filter: blur(28px) saturate(180%);
     border-bottom: 1px solid var(--line-strong);
     box-shadow: inset 0 1px 0 rgba(245,245,240,0.06), 0 16px 40px -16px rgba(0,0,0,0.55);
     padding: 1.6rem 1.5rem 2rem;
@@ -502,6 +509,16 @@ h1.hero-name {
   }
   .nav-links.open { opacity: 1; transform: none; pointer-events: auto; }
   .nav-toggle { display: flex; }
+
+  /* Blur/dim the page content itself behind the open mobile menu — a
+     translucent panel alone can't reliably hide large bold headings
+     sitting directly behind it, so the source content is blurred too. */
+  body.nav-open > section,
+  body.nav-open > footer {
+    filter: blur(16px);
+    opacity: 0.4;
+    transition: filter 0.3s, opacity 0.3s;
+  }
 
   #hero { padding: 7rem 1.5rem 3.5rem; }
   .gallery-section, #about, #contact { padding: 5rem 1.5rem; }
