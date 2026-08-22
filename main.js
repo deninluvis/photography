@@ -231,39 +231,49 @@ if (lightbox) {
   }, { passive: true });
 }
 
-// ── Home page settings (content/home.json, managed via the CMS):
-// pinned hero photo(s), plus the curated Highlighted Photos list ──
-async function fetchHomeSettings() {
+// ── Home page settings, managed via the CMS as two separate files:
+// content/home.json (pinned hero photos) and content/highlights.json
+// (the curated Highlighted Photos list) ──
+async function fetchJson(path, fallback) {
   try {
-    const res = await fetch(`https://raw.githubusercontent.com/${REPO}/${BRANCH}/content/home.json`);
-    if (!res.ok) return { hero: {}, highlights: [] };
-    const data = await res.json();
-    const toHighlightEntries = (list, orientation) => (Array.isArray(list) ? list : [])
-      .filter(h => h && h.image)
-      .slice(0, 3)
-      .map(h => {
-        const imagePath = resolveAssetPath(h.image, 'images/photography');
-        return {
-          url: rawUrl(imagePath),
-          title: h.caption || formatCaption(imagePath.split('/').pop()),
-          orientation,
-          location: '', camera: '', description: '', link: '',
-        };
-      });
-    const highlights = [
-      ...toHighlightEntries(data.highlightsPortrait, 'portrait'),
-      ...toHighlightEntries(data.highlightsLandscape, 'landscape'),
-    ];
-    return {
-      hero: {
-        desktop: data.heroImage ? rawUrl(resolveAssetPath(data.heroImage, 'images/site')) : null,
-        mobile: data.heroImageMobile ? rawUrl(resolveAssetPath(data.heroImageMobile, 'images/site')) : null,
-      },
-      highlights,
-    };
+    const res = await fetch(`https://raw.githubusercontent.com/${REPO}/${BRANCH}/${path}`);
+    return res.ok ? await res.json() : fallback;
   } catch (e) {
-    return { hero: {}, highlights: [] };
+    return fallback;
   }
+}
+
+async function fetchHomeSettings() {
+  const [home, highlightsData] = await Promise.all([
+    fetchJson('content/home.json', {}),
+    fetchJson('content/highlights.json', {}),
+  ]);
+
+  const toHighlightEntries = (list, orientation) => (Array.isArray(list) ? list : [])
+    .filter(h => h && h.image)
+    .slice(0, 3)
+    .map(h => {
+      const imagePath = resolveAssetPath(h.image, 'images/photography');
+      return {
+        url: rawUrl(imagePath),
+        title: formatCaption(imagePath.split('/').pop()),
+        orientation,
+        location: '', camera: '', description: '', link: '',
+        imagePath,
+      };
+    });
+  const highlights = [
+    ...toHighlightEntries(highlightsData.highlightsPortrait, 'portrait'),
+    ...toHighlightEntries(highlightsData.highlightsLandscape, 'landscape'),
+  ];
+
+  return {
+    hero: {
+      desktop: home.heroImage ? rawUrl(resolveAssetPath(home.heroImage, 'images/site')) : null,
+      mobile: home.heroImageMobile ? rawUrl(resolveAssetPath(home.heroImageMobile, 'images/site')) : null,
+    },
+    highlights,
+  };
 }
 
 function applyHeroImage(url, cssVar) {
@@ -337,7 +347,14 @@ const LATEST_PREVIEW_COUNT = 6;
 
   if (photoSection) renderGallery('photography', photos);
   if (engSection) renderGallery('engineering', engineering);
-  if (highlightsSection) renderHighlights('highlights', homeSettings.highlights);
+  if (highlightsSection) {
+    const photoByPath = new Map(photos.map(p => [p.imagePath, p]));
+    const highlights = homeSettings.highlights.map(h => {
+      const match = photoByPath.get(h.imagePath);
+      return match ? { ...h, title: match.title, location: match.location, camera: match.camera } : h;
+    });
+    renderHighlights('highlights', highlights);
+  }
   if (latestEngSection) renderGallery('latest-engineering', engineering.slice(0, LATEST_PREVIEW_COUNT));
   if (heroEl) {
     applyHeroImage(homeSettings.hero.desktop || (photos[0] && photos[0].url), '--hero-image');

@@ -1,24 +1,4 @@
 {
   "heroImage": "desktop.jpg",
-  "heroImageMobile": "IMG_7625.jpg",
-  "highlightsPortrait": [
-    {
-      "image": "IMG_8802.jpeg",
-      "caption": ""
-    },
-    {
-      "image": "IMG_9665.jpeg",
-      "caption": ""
-    },
-    {
-      "image": "IMG_8864.jpeg",
-      "caption": ""
-    }
-  ],
-  "highlightsLandscape": [
-    {
-      "image": "DSC02757.jpeg",
-      "caption": ""
-    }
-  ]
+  "heroImageMobile": "IMG_7625.jpg"
 }
