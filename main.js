@@ -77,7 +77,7 @@ function resolveAssetPath(raw, fallbackFolder) {
 }
 
 async function fetchGalleryEntries(folder) {
-  const cacheKey = `gallery-cache-v2-${folder}`;
+  const cacheKey = `gallery-cache-v3-${folder}`;
   try {
     const cached = JSON.parse(sessionStorage.getItem(cacheKey));
     if (cached && Date.now() - cached.time < CACHE_TTL_MS) return cached.entries;
@@ -107,6 +107,7 @@ async function fetchGalleryEntries(folder) {
           description: data.description || '',
           link: data.link || '',
           imagePath,
+          hidden: data.hidden === true,
         };
       } catch (e) {
         return null;
@@ -125,7 +126,9 @@ async function fetchGalleryEntries(folder) {
         imagePath: `images/${folder}/${item.name}`,
       }));
 
-    const entries = [...jsonEntries.filter(Boolean), ...fallbackEntries]
+    // Hidden entries are dropped only here: they still count as `referenced`
+    // above, so their image can't come back as a bare-file fallback.
+    const entries = [...jsonEntries.filter(e => e && !e.hidden), ...fallbackEntries]
       .sort((a, b) => b.key.localeCompare(a.key, undefined, { numeric: true }));
 
     try { sessionStorage.setItem(cacheKey, JSON.stringify({ time: Date.now(), entries })); } catch (e) {}
@@ -332,7 +335,12 @@ const LATEST_PREVIEW_COUNT = 6;
   if (engSection) renderGallery('engineering', engineering);
   if (highlightsSection) {
     const photoByPath = new Map(photos.map(p => [p.imagePath, p]));
-    const highlights = homeSettings.highlights.map(h => {
+    // Skip highlights whose photo was deleted or hidden. An empty list means
+    // the GitHub listing itself failed, so keep them rather than blank the grid.
+    const available = photos.length
+      ? homeSettings.highlights.filter(h => photoByPath.has(h.imagePath))
+      : homeSettings.highlights;
+    const highlights = available.map(h => {
       const match = photoByPath.get(h.imagePath);
       return match ? { ...h, title: match.title, location: match.location, camera: match.camera } : h;
     });

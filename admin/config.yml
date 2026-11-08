@@ -17,6 +17,16 @@ backend:
 media_folder: ""
 public_folder: ""
 
+# Uploads are converted in the browser before they reach the repo.
+media_libraries:
+  all:
+    transformations:
+      raster_image:
+        format: webp
+        quality: 85
+        width: 2560
+        height: 2560
+
 collections:
   - name: photography
     label: Photography
@@ -26,10 +36,19 @@ collections:
     delete: true
     extension: json
     format: json
-    slug: "{{year}}{{month}}{{day}}{{hour}}{{minute}}{{second}}"
+    slug: "{{year}}{{month}}{{day}}{{hour}}{{minute}}{{second}}-{{slug}}"
     media_folder: ""
     public_folder: ""
     summary: "{{title}}"
+    sortable_fields:
+      - { field: slug, label: Date added, default_sort: desc }
+      - { field: title, label: Title }
+      - { field: location, label: Location }
+      - { field: camera, label: Camera }
+    view_groups:
+      - { label: Location, field: location }
+      - { label: Camera, field: camera }
+      - { label: Orientation, field: orientation }
     fields:
       - label: Title
         name: title
@@ -38,15 +57,33 @@ collections:
         name: image
         widget: image
         accept: "image/jpeg,image/png,image/webp"
-        hint: "JPG, PNG, or WEBP only — RAW/DNG files won't display in browsers."
+        hint: "JPG, PNG, or WEBP only — RAW/DNG files won't display in browsers. Uploads are converted to WebP, at most 2560px on the long edge."
+      - label: Orientation
+        name: orientation
+        widget: select
+        options:
+          - { label: Portrait, value: portrait }
+          - { label: Landscape, value: landscape }
+          - { label: Square, value: square }
+        hint: "Which way the photo actually is. Portrait slots in Highlighted Photos only list photos marked Portrait."
       - label: Location
         name: location
         widget: string
         required: false
+        hint: "City and province, e.g. Niagara Falls, ON"
       - label: Camera
         name: camera
-        widget: string
+        widget: select
         required: false
+        options:
+          - Sony a7ii
+          - iPhone 15 Pro Max
+      - label: Hide from site
+        name: hidden
+        widget: boolean
+        required: false
+        default: false
+        hint: "Keeps this photo in the CMS but off the website, including the home page highlights."
 
   - name: engineering
     label: Engineering Design
@@ -56,10 +93,13 @@ collections:
     delete: true
     extension: json
     format: json
-    slug: "{{year}}{{month}}{{day}}{{hour}}{{minute}}{{second}}"
+    slug: "{{year}}{{month}}{{day}}{{hour}}{{minute}}{{second}}-{{slug}}"
     media_folder: ""
     public_folder: ""
     summary: "{{title}}"
+    sortable_fields:
+      - { field: slug, label: Date added, default_sort: desc }
+      - { field: title, label: Title }
     fields:
       - label: Title
         name: title
@@ -77,9 +117,16 @@ collections:
         widget: string
         required: false
         hint: "Link to the model on Thangs, GrabCAD, Onshape, etc."
+        pattern: ['^https://\S+$', 'Use a full link starting with https://']
+      - label: Hide from site
+        name: hidden
+        widget: boolean
+        required: false
+        default: false
+        hint: "Keeps this render in the CMS but off the website."
 
   - name: settings
-    label: Site Settings
+    label: Home Page
     files:
       - name: highlights
         label: Highlighted Photos
@@ -91,29 +138,31 @@ collections:
             min: 3
             max: 3
             summary: "{{fields.image}}"
-            hint: "Exactly 3 portrait photos (roughly 4:5, taller than wide) for the featured grid on the home page. Pick straight from your existing Photography entries — nothing to upload here."
+            hint: "Exactly 3 portrait photos for the featured grid on the home page, shown cropped to 2:3. Pick straight from your existing Photography entries — nothing to upload here."
             fields:
               - label: Photo
                 name: image
                 widget: relation
                 collection: photography
-                search_fields: [title]
-                display_fields: [title]
+                search_fields: [title, location]
+                display_fields: [title, location]
                 value_field: image
-                hint: "Search by the title you gave it in the Photography collection — its caption there is reused here too."
+                filters:
+                  - { field: orientation, values: [portrait] }
+                hint: "Only photos marked Portrait are listed. Search by the title you gave it in the Photography collection — its caption there is reused here too."
           - label: Landscape Photos
             name: highlightsLandscape
             widget: list
             min: 3
             max: 3
             summary: "{{fields.image}}"
-            hint: "Exactly 3 landscape photos (roughly 3:2, wider than tall) for the featured grid on the home page. Pick straight from your existing Photography entries — nothing to upload here."
+            hint: "Exactly 3 photos for the landscape slots in the featured grid on the home page, shown cropped to 3:2. Landscape shots fit best; a portrait shot will lose its top and bottom. Pick straight from your existing Photography entries — nothing to upload here."
             fields:
               - label: Photo
                 name: image
                 widget: relation
                 collection: photography
-                search_fields: [title]
-                display_fields: [title]
+                search_fields: [title, location]
+                display_fields: [title, orientation, location]
                 value_field: image
                 hint: "Search by the title you gave it in the Photography collection — its caption there is reused here too."
