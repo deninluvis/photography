@@ -166,3 +166,24 @@ collections:
                 display_fields: [title, orientation, location]
                 value_field: image
                 hint: "Search by the title you gave it in the Photography collection — its caption there is reused here too."
+
+      - name: engineering_highlights
+        label: Highlighted Designs
+        file: content/engineering-highlights.json
+        fields:
+          - label: Designs
+            name: highlights
+            widget: list
+            required: false
+            max: 6
+            summary: "{{fields.image}}"
+            hint: "Up to 6 images for the home page, shown in this order as equal tiles cropped to 3:2. Landscape images fit best; anything taller will lose its top and bottom. Pick straight from your existing Engineering Design entries — nothing to upload here."
+            fields:
+              - label: Design
+                name: image
+                widget: relation
+                collection: engineering
+                search_fields: [title]
+                display_fields: [title]
+                value_field: image
+                hint: "Search by the title you gave it in Engineering Design — its caption and CAD link are reused here too."

@@ -386,6 +386,17 @@ body.is-home .gallery-section { padding-top: 6rem; padding-bottom: 6rem; }
   .highlight-column { width: 100%; }
 }
 
+/* ── Highlighted designs (home page): up to 6 identical 3:2 tiles ── */
+.design-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+.design-grid .gallery-tile { margin-bottom: 0; }
+.design-grid img { aspect-ratio: 3 / 2; object-fit: cover; }
+@media (max-width: 900px) { .design-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 560px) { .design-grid { grid-template-columns: minmax(0, 1fr); } }
+
 .gallery-empty {
   display: flex;
   flex-direction: column;
