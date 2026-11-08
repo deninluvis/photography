@@ -132,58 +132,21 @@ collections:
         label: Highlighted Photos
         file: content/highlights.json
         fields:
-          - label: Portrait Photos
-            name: highlightsPortrait
-            widget: list
-            min: 3
-            max: 3
-            summary: "{{fields.image}}"
-            hint: "Exactly 3 portrait photos for the featured grid on the home page, shown cropped to 2:3. Pick straight from your existing Photography entries — nothing to upload here."
-            fields:
-              - label: Photo
-                name: image
-                widget: relation
-                collection: photography
-                search_fields: [title, location]
-                display_fields: [title, location]
-                value_field: image
-                filters:
-                  - { field: orientation, values: [portrait] }
-                hint: "Only photos marked Portrait are listed. Search by the title you gave it in the Photography collection — its caption there is reused here too."
-          - label: Landscape Photos
-            name: highlightsLandscape
-            widget: list
-            min: 3
-            max: 3
-            summary: "{{fields.image}}"
-            hint: "Exactly 3 photos for the landscape slots in the featured grid on the home page, shown cropped to 3:2. Landscape shots fit best; a portrait shot will lose its top and bottom. Pick straight from your existing Photography entries — nothing to upload here."
-            fields:
-              - label: Photo
-                name: image
-                widget: relation
-                collection: photography
-                search_fields: [title, location]
-                display_fields: [title, orientation, location]
-                value_field: image
-                hint: "Search by the title you gave it in the Photography collection — its caption there is reused here too."
+          # dropdown_threshold: 0 forces a dropdown; short lists otherwise become radio buttons.
+          - { label: "Landscape 1 (left column, top)", name: landscape1, widget: relation, collection: photography, value_field: image, search_fields: [title, location], display_fields: [title, orientation, location], dropdown_threshold: 0, hint: "Lists everything in Photography. Landscape slots are cropped to 3:2, so a portrait shot will lose its top and bottom." }
+          - { label: "Portrait 1 (left column, bottom)", name: portrait1, widget: relation, collection: photography, value_field: image, search_fields: [title, location], display_fields: [title, location], dropdown_threshold: 0, filters: [{ field: orientation, values: [portrait] }], hint: "Lists photos marked Portrait in Photography, shown cropped to 2:3." }
+          - { label: "Portrait 2 (middle column, top)", name: portrait2, widget: relation, collection: photography, value_field: image, search_fields: [title, location], display_fields: [title, location], dropdown_threshold: 0, filters: [{ field: orientation, values: [portrait] }] }
+          - { label: "Landscape 2 (middle column, bottom)", name: landscape2, widget: relation, collection: photography, value_field: image, search_fields: [title, location], display_fields: [title, orientation, location], dropdown_threshold: 0 }
+          - { label: "Landscape 3 (right column, top)", name: landscape3, widget: relation, collection: photography, value_field: image, search_fields: [title, location], display_fields: [title, orientation, location], dropdown_threshold: 0 }
+          - { label: "Portrait 3 (right column, bottom)", name: portrait3, widget: relation, collection: photography, value_field: image, search_fields: [title, location], display_fields: [title, location], dropdown_threshold: 0, filters: [{ field: orientation, values: [portrait] }] }
 
       - name: engineering_highlights
         label: Highlighted Designs
         file: content/engineering-highlights.json
         fields:
-          - label: Designs
-            name: highlights
-            widget: list
-            required: false
-            max: 6
-            summary: "{{fields.image}}"
-            hint: "Up to 6 images for the home page, shown in this order as equal tiles cropped to 3:2. Landscape images fit best; anything taller will lose its top and bottom. Pick straight from your existing Engineering Design entries — nothing to upload here."
-            fields:
-              - label: Design
-                name: image
-                widget: relation
-                collection: engineering
-                search_fields: [title]
-                display_fields: [title]
-                value_field: image
-                hint: "Search by the title you gave it in Engineering Design — its caption and CAD link are reused here too."
+          - { label: Design 1, name: design1, widget: relation, required: false, collection: engineering, value_field: image, search_fields: [title], display_fields: [title], dropdown_threshold: 0, hint: "Lists everything in Engineering Design. Tiles are cropped to 3:2 and appear in this order, so landscape images fit best." }
+          - { label: Design 2, name: design2, widget: relation, required: false, collection: engineering, value_field: image, search_fields: [title], display_fields: [title], dropdown_threshold: 0 }
+          - { label: Design 3, name: design3, widget: relation, required: false, collection: engineering, value_field: image, search_fields: [title], display_fields: [title], dropdown_threshold: 0 }
+          - { label: Design 4, name: design4, widget: relation, required: false, collection: engineering, value_field: image, search_fields: [title], display_fields: [title], dropdown_threshold: 0 }
+          - { label: Design 5, name: design5, widget: relation, required: false, collection: engineering, value_field: image, search_fields: [title], display_fields: [title], dropdown_threshold: 0 }
+          - { label: Design 6, name: design6, widget: relation, required: false, collection: engineering, value_field: image, search_fields: [title], display_fields: [title], dropdown_threshold: 0 }

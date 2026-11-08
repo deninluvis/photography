@@ -253,12 +253,16 @@ async function fetchJson(path, fallback) {
   }
 }
 
-function toHighlightEntries(list, folder, limit, orientation) {
-  return (Array.isArray(list) ? list : [])
-    .filter(h => h && h.image)
-    .slice(0, limit)
-    .map(h => {
-      const imagePath = resolveAssetPath(h.image, folder);
+// Each highlight is its own CMS dropdown, stored as <prefix>1, <prefix>2, ...
+function highlightSlots(data, prefix, count) {
+  return Array.from({ length: count }, (_, i) => data[`${prefix}${i + 1}`]);
+}
+
+function toHighlightEntries(images, folder, orientation) {
+  return images
+    .filter(Boolean)
+    .map(image => {
+      const imagePath = resolveAssetPath(image, folder);
       return {
         url: rawUrl(imagePath),
         title: formatCaption(imagePath.split('/').pop()),
@@ -272,14 +276,14 @@ function toHighlightEntries(list, folder, limit, orientation) {
 async function fetchPhotoHighlights() {
   const data = await fetchJson('content/highlights.json', {});
   return [
-    ...toHighlightEntries(data.highlightsPortrait, 'images/photography', 3, 'portrait'),
-    ...toHighlightEntries(data.highlightsLandscape, 'images/photography', 3, 'landscape'),
+    ...toHighlightEntries(highlightSlots(data, 'portrait', 3), 'images/photography', 'portrait'),
+    ...toHighlightEntries(highlightSlots(data, 'landscape', 3), 'images/photography', 'landscape'),
   ];
 }
 
 async function fetchDesignHighlights() {
   const data = await fetchJson('content/engineering-highlights.json', {});
-  return toHighlightEntries(data.highlights, 'images/engineering', 6);
+  return toHighlightEntries(highlightSlots(data, 'design', 6), 'images/engineering');
 }
 
 // Fills each highlight in from its gallery entry, so captions and lightbox

@@ -1,24 +1,8 @@
 {
-  "highlightsPortrait": [
-    {
-      "image": "IMG_8802.webp"
-    },
-    {
-      "image": "IMG_9665.webp"
-    },
-    {
-      "image": "IMG_8864.webp"
-    }
-  ],
-  "highlightsLandscape": [
-    {
-      "image": "DSC02757.webp"
-    },
-    {
-      "image": "IMG_8863.webp"
-    },
-    {
-      "image": "IMG_8092.webp"
-    }
-  ]
+  "landscape1": "DSC02757.webp",
+  "portrait1": "IMG_8802.webp",
+  "portrait2": "IMG_9665.webp",
+  "landscape2": "IMG_8863.webp",
+  "landscape3": "IMG_8092.webp",
+  "portrait3": "IMG_8864.webp"
 }
