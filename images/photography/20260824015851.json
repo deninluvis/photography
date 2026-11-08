@@ -1,6 +1,7 @@
 {
   "title": "The Full Moon",
-  "image": "IMG_9070.jpeg",
-  "location": "Scarborough, ON, Canada",
+  "image": "IMG_9070.webp",
+  "orientation": "square",
+  "location": "Scarborough, ON",
   "camera": "Sony a7ii"
 }
