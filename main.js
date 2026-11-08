@@ -242,8 +242,8 @@ if (lightbox) {
   }, { passive: true });
 }
 
-// ── Home page settings: the curated Highlighted Photos list, managed via
-// the CMS in content/highlights.json ──
+// ── Home page highlights: curated lists managed via the CMS in
+// content/highlights.json (photos) and content/engineering-highlights.json ──
 async function fetchJson(path, fallback) {
   try {
     const res = await fetch(`https://raw.githubusercontent.com/${REPO}/${BRANCH}/${path}`);
@@ -253,14 +253,12 @@ async function fetchJson(path, fallback) {
   }
 }
 
-async function fetchHomeSettings() {
-  const highlightsData = await fetchJson('content/highlights.json', {});
-
-  const toHighlightEntries = (list, orientation) => (Array.isArray(list) ? list : [])
+function toHighlightEntries(list, folder, limit, orientation) {
+  return (Array.isArray(list) ? list : [])
     .filter(h => h && h.image)
-    .slice(0, 3)
+    .slice(0, limit)
     .map(h => {
-      const imagePath = resolveAssetPath(h.image, 'images/photography');
+      const imagePath = resolveAssetPath(h.image, folder);
       return {
         url: rawUrl(imagePath),
         title: formatCaption(imagePath.split('/').pop()),
@@ -269,12 +267,34 @@ async function fetchHomeSettings() {
         imagePath,
       };
     });
-  const highlights = [
-    ...toHighlightEntries(highlightsData.highlightsPortrait, 'portrait'),
-    ...toHighlightEntries(highlightsData.highlightsLandscape, 'landscape'),
-  ];
+}
 
-  return { highlights };
+async function fetchPhotoHighlights() {
+  const data = await fetchJson('content/highlights.json', {});
+  return [
+    ...toHighlightEntries(data.highlightsPortrait, 'images/photography', 3, 'portrait'),
+    ...toHighlightEntries(data.highlightsLandscape, 'images/photography', 3, 'landscape'),
+  ];
+}
+
+async function fetchDesignHighlights() {
+  const data = await fetchJson('content/engineering-highlights.json', {});
+  return toHighlightEntries(data.highlights, 'images/engineering', 6);
+}
+
+// Fills each highlight in from its gallery entry, so captions and lightbox
+// details stay in one place. Skips highlights whose entry was deleted or
+// hidden. An empty gallery means the GitHub listing itself failed, so keep
+// them then rather than blank the grid.
+function matchHighlights(highlights, galleryEntries) {
+  const byPath = new Map(galleryEntries.map(e => [e.imagePath, e]));
+  const available = galleryEntries.length ? highlights.filter(h => byPath.has(h.imagePath)) : highlights;
+  return available.map(h => {
+    const match = byPath.get(h.imagePath);
+    return match
+      ? { ...h, title: match.title, location: match.location, camera: match.camera, description: match.description, link: match.link }
+      : h;
+  });
 }
 
 // Split into 3 columns of [landscape, portrait] pairs (offset for the
@@ -314,37 +334,24 @@ function renderHighlights(sectionId, rawEntries) {
 }
 
 // ── Init: fetch only what the current page actually needs ──
-const LATEST_PREVIEW_COUNT = 6;
-
 (async () => {
   const photoSection = document.getElementById('photography');
   const engSection = document.getElementById('engineering');
   const highlightsSection = document.getElementById('highlights');
-  const latestEngSection = document.getElementById('latest-engineering');
+  const engHighlightsSection = document.getElementById('engineering-highlights');
 
   const needPhotos = photoSection || highlightsSection;
-  const needEngineering = engSection || latestEngSection;
+  const needEngineering = engSection || engHighlightsSection;
 
-  const [photos, engineering, homeSettings] = await Promise.all([
+  const [photos, engineering, photoHighlights, engHighlights] = await Promise.all([
     needPhotos ? fetchGalleryEntries('photography') : Promise.resolve([]),
     needEngineering ? fetchGalleryEntries('engineering') : Promise.resolve([]),
-    highlightsSection ? fetchHomeSettings() : Promise.resolve({ highlights: [] }),
+    highlightsSection ? fetchPhotoHighlights() : Promise.resolve([]),
+    engHighlightsSection ? fetchDesignHighlights() : Promise.resolve([]),
   ]);
 
   if (photoSection) renderGallery('photography', photos);
   if (engSection) renderGallery('engineering', engineering);
-  if (highlightsSection) {
-    const photoByPath = new Map(photos.map(p => [p.imagePath, p]));
-    // Skip highlights whose photo was deleted or hidden. An empty list means
-    // the GitHub listing itself failed, so keep them rather than blank the grid.
-    const available = photos.length
-      ? homeSettings.highlights.filter(h => photoByPath.has(h.imagePath))
-      : homeSettings.highlights;
-    const highlights = available.map(h => {
-      const match = photoByPath.get(h.imagePath);
-      return match ? { ...h, title: match.title, location: match.location, camera: match.camera } : h;
-    });
-    renderHighlights('highlights', highlights);
-  }
-  if (latestEngSection) renderGallery('latest-engineering', engineering.slice(0, LATEST_PREVIEW_COUNT));
+  if (highlightsSection) renderHighlights('highlights', matchHighlights(photoHighlights, photos));
+  if (engHighlightsSection) renderGallery('engineering-highlights', matchHighlights(engHighlights, engineering));
 })();
