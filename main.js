@@ -24,7 +24,6 @@ navToggle.addEventListener('click', () => {
   const open = navLinks.classList.toggle('open');
   navToggle.classList.toggle('open', open);
   navToggle.setAttribute('aria-expanded', String(open));
-  document.body.classList.toggle('nav-open', open);
 });
 
 navLinks.querySelectorAll('a').forEach(link => {
@@ -136,6 +135,16 @@ async function fetchGalleryEntries(folder) {
   }
 }
 
+function tileInnerHtml(entry) {
+  const title = escapeHtml(entry.title);
+  return `
+    <span class="tile-frame">
+      <img src="${entry.url}" alt="${title}" loading="lazy" />
+    </span>
+    <span class="tile-edge mono"><span class="tile-title">${title}</span></span>
+  `;
+}
+
 function renderGallery(sectionId, entries) {
   const section = document.getElementById(sectionId);
   if (!section) return;
@@ -148,8 +157,7 @@ function renderGallery(sectionId, entries) {
   if (empty) empty.hidden = true;
   grid.innerHTML = entries.map((entry, i) => `
     <button class="gallery-tile reveal" data-index="${i}" aria-label="Open ${escapeHtml(entry.title)}">
-      <img src="${entry.url}" alt="${escapeHtml(entry.title)}" loading="lazy" />
-      <span class="gallery-tile-caption mono">${escapeHtml(entry.title)}</span>
+      ${tileInnerHtml(entry)}
     </button>
   `).join('');
   grid.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
@@ -231,9 +239,8 @@ if (lightbox) {
   }, { passive: true });
 }
 
-// ── Home page settings, managed via the CMS as two separate files:
-// content/home.json (pinned hero photos) and content/highlights.json
-// (the curated Highlighted Photos list) ──
+// ── Home page settings: the curated Highlighted Photos list, managed via
+// the CMS in content/highlights.json ──
 async function fetchJson(path, fallback) {
   try {
     const res = await fetch(`https://raw.githubusercontent.com/${REPO}/${BRANCH}/${path}`);
@@ -244,10 +251,7 @@ async function fetchJson(path, fallback) {
 }
 
 async function fetchHomeSettings() {
-  const [home, highlightsData] = await Promise.all([
-    fetchJson('content/home.json', {}),
-    fetchJson('content/highlights.json', {}),
-  ]);
+  const highlightsData = await fetchJson('content/highlights.json', {});
 
   const toHighlightEntries = (list, orientation) => (Array.isArray(list) ? list : [])
     .filter(h => h && h.image)
@@ -267,24 +271,7 @@ async function fetchHomeSettings() {
     ...toHighlightEntries(highlightsData.highlightsLandscape, 'landscape'),
   ];
 
-  return {
-    hero: {
-      desktop: home.heroImage ? rawUrl(resolveAssetPath(home.heroImage, 'images/site')) : null,
-      mobile: home.heroImageMobile ? rawUrl(resolveAssetPath(home.heroImageMobile, 'images/site')) : null,
-    },
-    highlights,
-  };
-}
-
-function applyHeroImage(url, cssVar) {
-  if (!url) return;
-  const hero = document.getElementById('hero');
-  const im = new Image();
-  im.onload = () => {
-    hero.style.setProperty(cssVar, `url("${url}")`);
-    hero.classList.add('has-image');
-  };
-  im.src = url;
+  return { highlights };
 }
 
 // Split into 3 columns of [landscape, portrait] pairs (offset for the
@@ -313,8 +300,7 @@ function renderHighlights(sectionId, rawEntries) {
 
   const tileHtml = entry => `
     <button class="gallery-tile highlight-tile ${entry.orientation} reveal" data-index="${entries.indexOf(entry)}" aria-label="Open ${escapeHtml(entry.title)}">
-      <img src="${entry.url}" alt="${escapeHtml(entry.title)}" loading="lazy" />
-      <span class="gallery-tile-caption mono">${escapeHtml(entry.title)}</span>
+      ${tileInnerHtml(entry)}
     </button>
   `;
   grid.innerHTML = columns.map(col => `<div class="highlight-column">${col.map(tileHtml).join('')}</div>`).join('');
@@ -328,20 +314,18 @@ function renderHighlights(sectionId, rawEntries) {
 const LATEST_PREVIEW_COUNT = 6;
 
 (async () => {
-  const heroEl = document.getElementById('hero');
   const photoSection = document.getElementById('photography');
   const engSection = document.getElementById('engineering');
   const highlightsSection = document.getElementById('highlights');
   const latestEngSection = document.getElementById('latest-engineering');
 
-  const needPhotos = photoSection || heroEl;
+  const needPhotos = photoSection || highlightsSection;
   const needEngineering = engSection || latestEngSection;
-  const needHomeSettings = heroEl || highlightsSection;
 
   const [photos, engineering, homeSettings] = await Promise.all([
     needPhotos ? fetchGalleryEntries('photography') : Promise.resolve([]),
     needEngineering ? fetchGalleryEntries('engineering') : Promise.resolve([]),
-    needHomeSettings ? fetchHomeSettings() : Promise.resolve({ hero: {}, highlights: [] }),
+    highlightsSection ? fetchHomeSettings() : Promise.resolve({ highlights: [] }),
   ]);
 
   if (photoSection) renderGallery('photography', photos);
@@ -355,8 +339,4 @@ const LATEST_PREVIEW_COUNT = 6;
     renderHighlights('highlights', highlights);
   }
   if (latestEngSection) renderGallery('latest-engineering', engineering.slice(0, LATEST_PREVIEW_COUNT));
-  if (heroEl) {
-    applyHeroImage(homeSettings.hero.desktop || (photos[0] && photos[0].url), '--hero-image');
-    applyHeroImage(homeSettings.hero.mobile, '--hero-image-mobile');
-  }
 })();
