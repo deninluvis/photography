@@ -55,6 +55,35 @@
   --font-mono: 'IBM Plex Mono', ui-monospace, 'Cascadia Mono', Consolas, monospace;
 }
 
+/* Light mode for the darkroom pages: a warm light table. The lightbox sets
+   its own colours above, so photos always open on black. */
+:root[data-theme="light"] {
+  color-scheme: light;
+  --bg:           #f4f1ea;
+  --surface:      #e8e4da;
+  --ink:          #16130f;
+  --ink-mid:      #4f483e;
+  --ink-soft:     #6b6357;
+  --line:         rgba(22,19,15,0.14);
+  --line-strong:  rgba(22,19,15,0.36);
+  --accent:       #c8321f;
+}
+
+/* Dark mode for the drafting pages: a blueprint. */
+:root[data-theme="dark"] .room-draft {
+  color-scheme: dark;
+  --bg:           #0f1d33;
+  --surface:      #16273f;
+  --ink:          #e8eef6;
+  --ink-mid:      #a9bad0;
+  --ink-soft:     #8ea2bd;
+  --line:         rgba(232,238,246,0.16);
+  --line-strong:  rgba(232,238,246,0.42);
+  --accent:       #6fb0ff;
+  --grid:         rgba(140,190,255,0.06);
+  --grid-major:   rgba(140,190,255,0.12);
+}
+
 html { scroll-behavior: smooth; }
 
 body {
@@ -95,7 +124,7 @@ nav {
   color: var(--ink);
   text-decoration: none;
 }
-.nav-links { display: flex; align-items: center; gap: 2.2rem; list-style: none; }
+.nav-links { display: flex; align-items: center; gap: 2.2rem; list-style: none; margin-left: auto; }
 .nav-links a {
   font-family: var(--font-mono);
   font-size: 0.74rem;
@@ -119,6 +148,39 @@ nav {
 .nav-links a:hover::after { width: 100%; }
 .nav-links a.active { color: var(--ink); }
 .nav-links a.active::after { width: 100%; background: var(--accent); }
+
+.theme-toggle {
+  display: inline-flex;
+  flex: none;
+  margin-left: 1.7rem;
+  margin-right: -8px; /* keeps the icon's edge on the page margin */
+  padding: 8px; /* tap area stays 40px though the icon is smaller */
+  background: none;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+}
+.theme-toggle svg { display: block; width: 24px; height: 24px; }
+
+/* A camera iris: wide open lets the light in, stopped down is dark mode. */
+.tt-line {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 1.25;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+.tt-iris {
+  transform-origin: 16px 16px;
+  transform: rotate(-60deg) scale(.35);
+  transition: transform 0.55s cubic-bezier(.3,1.25,.5,1), stroke 0.2s;
+}
+:root[data-theme="light"] .tt-iris { transform: none; }
+@media (hover: hover) {
+  .theme-toggle:hover .tt-line { stroke: var(--accent); }
+  .theme-toggle:hover .tt-iris { transform: rotate(-52deg) scale(.43); }
+  :root[data-theme="light"] .theme-toggle:hover .tt-iris { transform: rotate(-8deg) scale(.92); }
+}
 
 .nav-toggle {
   display: none;
@@ -282,7 +344,11 @@ h1.hero-name {
 /* ── Film edge: where the darkroom hands over to the drawing board ── */
 .sprockets {
   height: 42px;
-  background: var(--bg) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='34' height='42'%3E%3Crect x='10' y='12' width='14' height='18' rx='2.5' fill='%23e9ece4'/%3E%3C/svg%3E") left center repeat-x;
+  background: #0e0c0b url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='34' height='42'%3E%3Crect x='10' y='12' width='14' height='18' rx='2.5' fill='%23e9ece4'/%3E%3C/svg%3E") left center repeat-x;
+}
+
+:root[data-theme="dark"] .sprockets {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='34' height='42'%3E%3Crect x='10' y='12' width='14' height='18' rx='2.5' fill='%233a5a80'/%3E%3C/svg%3E");
 }
 
 /* ── Gallery sections ── */
@@ -690,6 +756,7 @@ body.is-home .gallery-section { padding-top: 6rem; padding-bottom: 6rem; }
   .nav-links.open { opacity: 1; transform: none; pointer-events: auto; }
   .nav-links a { font-size: 0.85rem; }
   .nav-toggle { display: flex; }
+  .theme-toggle { margin-left: auto; margin-right: 0.6rem; }
   .hero-edge { letter-spacing: 0.03em; }
 
   .gallery-section { padding-top: 6rem; padding-bottom: 4.5rem; }

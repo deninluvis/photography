@@ -34,6 +34,57 @@ navLinks.querySelectorAll('a').forEach(link => {
   });
 });
 
+// ── Light/dark switch (the starting theme is set by theme.js) ──
+const themeToggle = document.createElement('button');
+themeToggle.type = 'button';
+themeToggle.className = 'theme-toggle';
+themeToggle.setAttribute('role', 'switch');
+themeToggle.setAttribute('aria-label', 'Light mode');
+themeToggle.innerHTML = themeToggleSvg();
+
+// A camera iris: a hexagonal hole whose edges run on past the corners as the
+// lines between blades. style.css scales and turns it to open and close.
+function themeToggleSvg() {
+  const point = (x, y) => `${x.toFixed(2)} ${y.toFixed(2)}`;
+  const corners = Array.from({ length: 6 }, (_, i) => {
+    const a = i * Math.PI / 3;
+    return [16 + 10 * Math.cos(a), 16 + 10 * Math.sin(a)];
+  });
+  const hole = corners.map(([x, y]) => point(x, y)).join(' L ');
+  const blades = corners.map(([x, y], i) => {
+    const [px, py] = corners[(i + 5) % 6];
+    return `M ${point(x, y)} L ${point(x + (x - px) * 6, y + (y - py) * 6)}`;
+  }).join(' ');
+
+  return `
+    <svg viewBox="0 0 32 32" aria-hidden="true">
+      <clipPath id="iris-clip"><circle cx="16" cy="16" r="15" /></clipPath>
+      <circle class="tt-line" cx="16" cy="16" r="15" />
+      <g clip-path="url(#iris-clip)">
+        <path class="tt-line tt-iris" d="M ${hole} Z ${blades}" />
+      </g>
+    </svg>
+  `;
+}
+
+function labelThemeToggle() {
+  const isLight = document.documentElement.dataset.theme === 'light';
+  const next = isLight ? 'dark' : 'light';
+  themeToggle.setAttribute('aria-checked', String(isLight));
+  themeToggle.title = `Switch to ${next} mode`;
+  return next;
+}
+
+themeToggle.addEventListener('click', () => {
+  const next = labelThemeToggle();
+  document.documentElement.dataset.theme = next;
+  try { localStorage.setItem('theme', next); } catch (e) {}
+  labelThemeToggle();
+});
+
+labelThemeToggle();
+nav.insertBefore(themeToggle, navToggle);
+
 // ── Scroll reveal ──
 const revealObserver = new IntersectionObserver(entries => {
   entries.forEach(entry => {
