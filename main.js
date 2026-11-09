@@ -337,6 +337,26 @@ function renderHighlights(sectionId, rawEntries) {
   });
 }
 
+// ── Home page clock: Scarborough time, whatever the visitor's timezone ──
+const heroClock = document.getElementById('hero-clock');
+if (heroClock) {
+  const clockFormat = new Intl.DateTimeFormat('en-US', {
+    timeZone: 'America/Toronto',
+    month: 'short', day: 'numeric', year: 'numeric',
+    hour: '2-digit', minute: '2-digit', second: '2-digit', hourCycle: 'h23',
+    timeZoneName: 'short',
+  });
+  const tick = () => {
+    const now = new Date();
+    const p = Object.fromEntries(clockFormat.formatToParts(now).map(part => [part.type, part.value]));
+    heroClock.textContent = `${p.month} ${p.day}, ${p.year} · ${p.hour}:${p.minute}:${p.second} ${p.timeZoneName}`;
+    heroClock.dateTime = now.toISOString();
+    // Re-aim at the next whole second so the display never skips one.
+    setTimeout(tick, 1000 - (Date.now() % 1000));
+  };
+  tick();
+}
+
 // ── Init: fetch only what the current page actually needs ──
 (async () => {
   const photoSection = document.getElementById('photography');
