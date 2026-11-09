@@ -197,7 +197,7 @@ section { position: relative; }
   min-height: 74svh;
   display: flex;
   align-items: flex-end;
-  padding: 8rem var(--gutter) 5.2rem;
+  padding: 8rem var(--gutter) 2.5rem;
   overflow: hidden;
 }
 .hero-content {
@@ -244,20 +244,21 @@ h1.hero-name {
   animation: fadeUp 0.8s 0.56s forwards;
 }
 .hero-edge {
-  position: absolute;
-  left: var(--gutter); right: var(--gutter);
-  bottom: 1.5rem;
-  display: flex;
-  justify-content: space-between;
-  gap: 1.5rem;
+  grid-column: 1 / -1;
+  margin-top: 2.2rem;
   padding-top: 0.75rem;
   border-top: 1px solid var(--line-strong);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.3rem 1.5rem;
   font-family: var(--font-mono);
   font-size: 0.72rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--ink-mid);
-  white-space: nowrap;
+  opacity: 0;
+  animation: fadeUp 0.8s 0.7s forwards;
 }
 
 /* ── Buttons ── */
@@ -689,8 +690,8 @@ body.is-home .gallery-section { padding-top: 6rem; padding-bottom: 6rem; }
   .nav-links.open { opacity: 1; transform: none; pointer-events: auto; }
   .nav-links a { font-size: 0.85rem; }
   .nav-toggle { display: flex; }
+  .hero-edge { letter-spacing: 0.03em; }
 
-  #hero { padding-bottom: 4.8rem; }
   .gallery-section { padding-top: 6rem; padding-bottom: 4.5rem; }
   body.is-home .gallery-section { padding-top: 4rem; padding-bottom: 4rem; }
   #about { padding-top: 6rem; }
