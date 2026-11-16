@@ -193,7 +193,7 @@ function tileInnerHtml(entry) {
   const title = escapeHtml(entry.title);
   return `
     <span class="tile-frame">
-      <img src="${entry.url}" alt="${title}" loading="lazy" />
+      <img src="${entry.url}" alt="${title}" loading="lazy" draggable="false" />
     </span>
     <span class="tile-edge mono"><span class="tile-title">${title}</span></span>
   `;
@@ -407,6 +407,14 @@ if (heroClock) {
   };
   tick();
 }
+
+// ── Deter saving photos: no context menu, drag, or long-press on gallery/lightbox images ──
+// (The CSS adds user-drag/touch-callout rules; this covers right-click and drag events.)
+function isProtectedImage(target) {
+  return target instanceof HTMLImageElement && !!target.closest('.gallery-tile, #lightbox');
+}
+document.addEventListener('contextmenu', e => { if (isProtectedImage(e.target)) e.preventDefault(); });
+document.addEventListener('dragstart', e => { if (isProtectedImage(e.target)) e.preventDefault(); });
 
 // ── Init: fetch only what the current page actually needs ──
 (async () => {

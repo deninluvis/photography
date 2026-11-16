@@ -386,6 +386,16 @@ body.is-home .gallery-section { padding-top: 6rem; padding-bottom: 6rem; }
   display: block;
   width: 100%;
   height: auto;
+  pointer-events: none; /* right-click lands on the tile button, so no "Save image as" */
+}
+
+/* Deter saving photos: no drag-to-desktop, no text/image selection, no iOS long-press sheet */
+.gallery-tile img,
+#lightbox img {
+  -webkit-user-drag: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
 }
 
 /* Edge printing under each frame */
