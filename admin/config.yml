@@ -71,13 +71,17 @@ collections:
         widget: string
         required: false
         hint: "City and province, e.g. Niagara Falls, ON"
+      # Relation to the Cameras collection: the dropdown has an "Add Camera" button, so new
+      # gear can be added while uploading a photo. The stored value is still the camera name.
       - label: Camera
         name: camera
-        widget: select
+        widget: relation
         required: false
-        options:
-          - Sony a7ii
-          - iPhone 15 Pro Max
+        collection: cameras
+        value_field: name
+        display_fields: [name]
+        search_fields: [name]
+        dropdown_threshold: 0
       - label: Hide from site
         name: hidden
         widget: boolean
@@ -124,6 +128,24 @@ collections:
         required: false
         default: false
         hint: "Keeps this render in the CMS but off the website."
+
+  - name: cameras
+    label: Cameras
+    label_singular: Camera
+    folder: content/cameras
+    create: true
+    delete: true
+    extension: json
+    format: json
+    slug: "{{name}}"
+    summary: "{{name}}"
+    sortable_fields:
+      - { field: name, label: Name, default_sort: asc }
+    fields:
+      - label: Name
+        name: name
+        widget: string
+        hint: "Shown under the photo on the site, e.g. Sony a7ii"
 
   - name: settings
     label: Home Page
